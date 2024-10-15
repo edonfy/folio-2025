@@ -127,9 +127,9 @@ export class Vehicle
 
                 let torqueY = 0
                 if(this.game.controls.keys.left)
-                    torqueY = 2
+                    torqueY += 2
                 else
-                    torqueY = -2
+                    torqueY -= 2
                 this.chassis.physical.body.applyTorqueImpulse({ x: 0, y: torqueY, z: 0 })
             }
         }
@@ -145,15 +145,15 @@ export class Vehicle
     {
         this.wheels.engineForce = 0
         if(this.game.controls.keys.up)
-            this.wheels.engineForce = 10
+            this.wheels.engineForce += 10
         if(this.game.controls.keys.down)
-            this.wheels.engineForce = -10
+            this.wheels.engineForce -= 10
 
         this.wheels.steering = 0
         if(this.game.controls.keys.right)
-            this.wheels.steering = -0.5
+            this.wheels.steering -= 0.5
         if(this.game.controls.keys.left)
-            this.wheels.steering = 0.5
+            this.wheels.steering += 0.5
         this.controller.setWheelSteering(0, this.wheels.steering)
         this.controller.setWheelSteering(2, this.wheels.steering)
 
