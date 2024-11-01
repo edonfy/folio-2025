@@ -304,9 +304,9 @@ export class Vehicle
             this.chassis.physical.body.setAngvel({ x: 0, y: 0, z: 0 })
         }
 
-        this.game.inputs.events.on('reset', (_down) =>
+        this.game.inputs.events.on('reset', (_event) =>
         {
-            if(_down)
+            if(_event.down)
                 this.reset.activate()
         })
     }
@@ -321,7 +321,7 @@ export class Vehicle
         for(let i = 0; i < 4; i++)
             this.controller.setWheelSuspensionRestLength(i, this.hydraulics.low)
 
-        this.hydraulics.update = () =>
+        this.hydraulics.update = (_event) =>
         {
             const activeHydraulics = [
                 this.game.inputs.keys.hydraulics || this.game.inputs.keys.hydraulicsFront || this.game.inputs.keys.hydraulicsRight || this.game.inputs.keys.hydraulicsFrontRight, // front right
@@ -330,10 +330,26 @@ export class Vehicle
                 this.game.inputs.keys.hydraulics || this.game.inputs.keys.hydraulicsBack || this.game.inputs.keys.hydraulicsLeft || this.game.inputs.keys.hydraulicsBackLeft, // back left
             ]
 
-            const restLength = this.game.inputs.keys.hydraulics ? this.hydraulics.high :this.hydraulics.mid
+            const restLength = this.game.inputs.keys.hydraulics ? this.hydraulics.high : this.hydraulics.mid
             
             for(let i = 0; i < 4; i++)
                 this.controller.setWheelSuspensionRestLength(i, activeHydraulics[i] ? restLength : this.hydraulics.low)
+
+            // Jump
+            if(_event.down && _event.name === 'hydraulics' && this.wheels.inContact >= 1 && (this.game.inputs.keys.left || this.game.inputs.keys.right))
+            {
+                // Torque
+                let torqueY = 0
+                if(this.game.inputs.keys.left)
+                    torqueY = 8
+                else if(this.game.inputs.keys.right)
+                    torqueY = -8
+
+                const torque = new THREE.Vector3(0, torqueY, 0)
+                torque.applyQuaternion(this.chassis.physical.body.rotation())
+
+                this.chassis.physical.body.applyTorqueImpulse(torque)
+            }
         }
 
         this.game.inputs.events.on('hydraulics', this.hydraulics.update)
@@ -345,7 +361,6 @@ export class Vehicle
         this.game.inputs.events.on('hydraulicsFrontRight', this.hydraulics.update)
         this.game.inputs.events.on('hydraulicsBackRight', this.hydraulics.update)
         this.game.inputs.events.on('hydraulicsBackLeft', this.hydraulics.update)
-
 
         // Debug
         if(this.game.debug.active)

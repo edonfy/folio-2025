@@ -31,7 +31,7 @@ export class Inputs
         if(map && !this.keys[map.name])
         {
             this.keys[map.name] = true
-            this.events.trigger(map.name, [ true ])
+            this.events.trigger(map.name, [ { down: true, name: map.name } ])
         }
     }
 
@@ -42,7 +42,7 @@ export class Inputs
         if(map && this.keys[map.name])
         {
             this.keys[map.name] = false
-            this.events.trigger(map.name, [ false ])
+            this.events.trigger(map.name, [ { down: false, name: map.name } ])
         }
     }
 }
