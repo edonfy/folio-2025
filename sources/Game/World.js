@@ -4,7 +4,6 @@ import { Game } from './Game.js'
 import MeshGridMaterial, { MeshGridMaterialLine } from './Materials/MeshGridMaterial.js'
 import { Terrain } from './Terrain.js'
 import { Bush } from './Bush.js'
-import { Lighting } from './Ligthing.js'
 
 export class World
 {
@@ -64,7 +63,7 @@ export class World
         {
             const gridFolder = this.game.debug.panel.addFolder({
                 title: '🌐 Grid',
-                expanded: true,
+                expanded: false,
             })
 
             gridFolder.addBinding(uvGridMaterial, 'scale', { min: 0, max: 0.002, step: 0.0001 })

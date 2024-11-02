@@ -26,7 +26,7 @@ export class Vehicle
         {
             this.debugPanel = this.game.debug.panel.addFolder({
                 title: '🚗 Vehicle',
-                expanded: true,
+                expanded: false,
             })
         }
 
@@ -469,5 +469,8 @@ export class Vehicle
             if(this.flip.active)
                 this.flip.deactivate()
         }
+
+        // View
+        this.game.view.target.copy(this.position)
     }
 }

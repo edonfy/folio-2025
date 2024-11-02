@@ -21,7 +21,7 @@ export class Time
         {
             this.debugPanel = this.game.debug.panel.addFolder({
                 title: '⏱️ Time',
-                expanded: true,
+                expanded: false,
             })
             this.debugPanel.addBinding(this, 'scale', { min: 0, max: 5, step: 0.01 })
         }

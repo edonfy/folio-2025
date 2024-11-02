@@ -28,7 +28,6 @@ export class Resources
 
     load(_files, _callback = null)
     {
-        console.log(_files)
         let toLoad = _files.length
         const loadedResources = {}
 

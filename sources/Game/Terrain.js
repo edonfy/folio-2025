@@ -69,7 +69,7 @@ export class Terrain
         {
             const folder = this.game.debug.panel.addFolder({
                 title: '🏔️ Terrain',
-                expanded: true,
+                expanded: false,
             })
 
             folder.addBinding({ color: '#' + grassColor.value.getHexString(THREE.SRGBColorSpace) }, 'color', { label: 'grassColor' }).on('change', tweak => grassColor.value.set(tweak.value))
