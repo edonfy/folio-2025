@@ -51,7 +51,7 @@ export class World
         // Physical ground
         this.game.physics.addEntity({
             type: 'fixed',
-            colliders: [ { shape: 'cuboid', parameters: [ 100, 1, 100 ], position: { x: 0, y: - 1.01, z: 0 } } ]
+            colliders: [ { shape: 'cuboid', parameters: [ 1000, 1, 1000 ], position: { x: 0, y: - 1.01, z: 0 } } ]
         })
 
         // Debug

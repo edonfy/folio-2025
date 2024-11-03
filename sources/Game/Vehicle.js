@@ -472,5 +472,14 @@ export class Vehicle
 
         // View
         this.game.view.target.copy(this.position)
+
+        if(this.game.inputs.keys.boost && this.absoluteSpeed > 5)
+        {
+            this.game.view.speedLines.targetStrength = 0.8
+        }
+        else
+        {
+            this.game.view.speedLines.targetStrength = 0
+        }
     }
 }
