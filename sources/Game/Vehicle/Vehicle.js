@@ -1,6 +1,6 @@
 import * as THREE from 'three'
-import { Game } from './Game.js'
-import { Events } from './Events.js'
+import { Game } from '../Game.js'
+import { Events } from '../Events.js'
 import { WheelTrack } from './WheelTrack.js'
 import { WheelTracks } from './WheelTracks.js'
 
@@ -106,7 +106,7 @@ export class Vehicle
             this.chassis.visual.add(wheel.visual)
 
             // Track
-            wheel.track = this.wheelTracks.addTrack(new WheelTrack())
+            wheel.track = this.wheelTracks.createTrack()
 
             // Base position
             wheel.basePosition = new THREE.Vector3()

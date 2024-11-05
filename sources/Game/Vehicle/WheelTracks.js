@@ -1,5 +1,6 @@
 import * as THREE from 'three'
-import { Game } from './Game.js'
+import { Game } from '../Game.js'
+import { WheelTrack } from './WheelTrack.js'
 
 export class WheelTracks
 {
@@ -42,8 +43,9 @@ export class WheelTracks
         // this.game.scene.add(this.debugPlane)
     }
 
-    addTrack(track)
+    createTrack()
     {
+        const track = new WheelTrack()
         this.tracks.push(track)
         this.scene.add(track.trail.mesh)
         return track

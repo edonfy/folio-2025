@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { Game } from './Game.js'
+import { Game } from '../Game.js'
 import { cos, sin, sign, atan2, varying, float, uv, texture, Fn, vec2, vec3, vec4, positionGeometry } from 'three'
 
 export class WheelTrack
@@ -12,35 +12,20 @@ export class WheelTrack
         this.timeSpan = 1 / 30
         this.lastTime = 0
         
-        this.setTexture()
+        this.setDataTexture()
         this.setTrail()
         // this.setDebugPlane()
     }
 
-    setTexture()
+    setDataTexture()
     {
-        this.texture = new THREE.DataTexture(
+        this.dataTexture = new THREE.DataTexture(
             new Float32Array(this.size * 4),
             this.size,
             1,
             THREE.RGBAFormat,
             THREE.FloatType
         )
-        
-        // this.texture.canvas = document.createElement('canvas')
-        // this.texture.canvas.width = this.size
-        // this.texture.canvas.height = 1
-        // this.texture.canvas.style.position = 'fixed'
-        // this.texture.canvas.style.top = 0
-        // this.texture.canvas.style.left = 0
-        // this.texture.canvas.style.zIndex = 1
-        // this.texture.canvas.style.width = `${this.size * 4}px`
-        // this.texture.canvas.style.height = '32px'
-
-        // document.body.append(this.texture.canvas)
-        
-        // this.texture.context = this.texture.canvas.getContext('2d')
-        // this.texture.instance = new THREE.CanvasTexture(this.texture.canvas)
     }
 
     setTrail()
@@ -68,8 +53,8 @@ export class WheelTrack
                 ratio.sub(fragmentSize),
                 0.5
             )
-            trackData.assign(texture(this.texture, trackUV))
-            const trackDataPrev = texture(this.texture, trackUVPrev)
+            trackData.assign(texture(this.dataTexture, trackUV))
+            const trackDataPrev = texture(this.dataTexture, trackUVPrev)
 
             const angle = atan2(
                 trackData.z.sub(trackDataPrev.z),
@@ -106,7 +91,7 @@ export class WheelTrack
     {
         this.debugPlane = new THREE.Mesh(
             new THREE.PlaneGeometry(8, 1),
-            new THREE.MeshBasicMaterial({ map: this.texture })
+            new THREE.MeshBasicMaterial({ map: this.dataTexture })
         )
         this.debugPlane.position.y = 2
         this.game.scene.add(this.debugPlane)
@@ -114,10 +99,10 @@ export class WheelTrack
 
     update(_position, _touching)
     {
-        const data = this.texture.source.data.data
+        const data = this.dataTexture.source.data.data
 
+        // Throttle update
         const lastTimeDelta = this.game.time.elapsed - this.lastTime
-
         if(lastTimeDelta > this.timeSpan)
         {
             // Move data one "pixel"
@@ -140,6 +125,6 @@ export class WheelTrack
             this.lastTime = this.game.time.elapsed
         }
 
-        this.texture.needsUpdate = true
+        this.dataTexture.needsUpdate = true
     }
 }
