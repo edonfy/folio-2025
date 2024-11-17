@@ -12,7 +12,7 @@ export class View
     {
         this.game = new Game()
 
-        this.mode = 'debugControls'
+        this.mode = 'default'
         this.position = new THREE.Vector3()
 
         if(this.game.debug.active)
@@ -110,12 +110,13 @@ export class View
         this.spherical.phi = Math.PI * 0.35
         this.spherical.theta = Math.PI * 0.25
 
-        this.spherical.offset = new THREE.Vector3()
-
         this.spherical.radius = {}
         this.spherical.radius.min = 10
         this.spherical.radius.max = 30
         this.spherical.radius.current = lerp(this.spherical.radius.min, this.spherical.radius.max, 1 - this.zoom.smoothedRatio)
+
+        this.spherical.offset = new THREE.Vector3()
+        this.spherical.offset.setFromSphericalCoords(this.spherical.radius.current, this.spherical.phi, this.spherical.theta)
 
         if(this.game.debug.active)
         {

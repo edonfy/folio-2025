@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { Game } from '../Game.js'
 import getWind from '../tsl/getWind.js'
-import { smoothstep, vec4, PI, vertexIndex, rotateUV, time, sin, uv, texture, float, Fn, positionLocal, vec3, transformNormalToView, normalWorld, positionWorld, frontFacing, If } from 'three'
+import { instance, smoothstep, vec4, PI, vertexIndex, rotateUV, time, sin, uv, texture, float, Fn, positionLocal, vec3, transformNormalToView, normalWorld, positionWorld, frontFacing, If } from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { remap } from '../utilities/maths.js'
 
@@ -15,7 +15,7 @@ export class Bushes
 
         this.game.resources.load(
             [
-                { path: 'bush/bush-leaves.png', type: 'texture', name: 'bushLeaves' },
+                { path: 'bush/bush-leaves-3.png', type: 'texture', name: 'bushLeaves' },
                 { path: 'matcaps/bushOnGreen.png', type: 'texture', name: 'matcapBushOnGreen' },
                 { path: 'noises-128x128.png', type: 'texture', name: 'noisesTexture' },
             ],
@@ -39,7 +39,7 @@ export class Bushes
 
     setGeometry()
     {
-        const count = 100
+        const count = 80
         const planes = []
 
         for(let i = 0; i < count; i++)
@@ -53,9 +53,10 @@ export class Bushes
                 Math.PI * Math.random()
             )
             const position = new THREE.Vector3().setFromSpherical(spherical)
-            plane.rotateX(Math.random() * 9999)
-            plane.rotateY(Math.random() * 9999)
+
+            // plane.rotateX(Math.random() * 9999)
             plane.rotateZ(Math.random() * 9999)
+            plane.rotateY(Math.PI * 0.5)
             plane.translate(
                 position.x,
                 position.y,
@@ -75,7 +76,7 @@ export class Bushes
                     plane.attributes.position.array[i3 + 2],
                 )
 
-                const mixedNormal = position.lerp(normal, 0.4)
+                const mixedNormal = position.lerp(normal, 0.75)
                 
                 normalArray[i3    ] = mixedNormal.x
                 normalArray[i3 + 1] = mixedNormal.y
@@ -97,51 +98,61 @@ export class Bushes
         // this.material = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide })
         // this.material = new THREE.MeshNormalNodeMaterial({ side: THREE.DoubleSide })
         this.material = new THREE.MeshMatcapNodeMaterial({
-            side: THREE.DoubleSide,
+            // side: THREE.DoubleSide,
             matcap: this.resources.matcapBushOnGreen,
             alphaMap: this.resources.bushLeaves,
             alphaTest: 0.01
         })
     
-        this.material.normalNode = Fn(() =>
-        {
-            const normal = normalWorld.toVar()
+        // this.material.normalNode = Fn(() =>
+        // {
+        //     const normal = normalWorld.toVar()
 
-            If(frontFacing.not(), () =>
-            {
-                normal.assign(normal.negate())
-            })
+        //     If(frontFacing.not(), () =>
+        //     {
+        //         normal.assign(normal.negate())
+        //     })
             
-            return transformNormalToView(normal)
-        })()
+        //     return transformNormalToView(normal)
+        // })()
 
         const wind = getWind([this.resources.noisesTexture, positionLocal.xz])
-        const multiplier = positionLocal.y.clamp(0, 1).mul(10)
-        this.material.positionNode = positionLocal.add(vec3(wind.x, 0, wind.y).mul(multiplier))
+        const multiplier = positionLocal.y.clamp(0, 1).mul(1)
 
-        const timeOffset = float(vertexIndex).div(4).floor().div(100)
-        const shakeStrength = smoothstep(0.1, 0.2, wind.length()).mul(0.2)
-        const shake = sin(time.add(timeOffset).mul(30))
-        const shakyUv = rotateUV(uv(), shake.mul(shakeStrength))
-        this.material.opacityNode = texture(this.resources.bushLeaves, shakyUv).r
+        // const timeOffset = float(vertexIndex).div(4).floor().div(100)
+        // const shakeStrength = smoothstep(0.1, 0.2, wind.length()).mul(0.2)
+        // const shake = sin(time.add(timeOffset).mul(30))
+        // const shakyUv = rotateUV(uv(), shake.mul(shakeStrength))
+        // this.material.opacityNode = texture(this.resources.bushLeaves, shakyUv).r
 
-        // this.material.outputNode = vec4(vec3(positionLocal.xz), 1)
+        this.material.positionNode = Fn( ( { object } ) =>
+        {
+            instance(object.count, this.instanceMatrix).append()
+
+            // const elevation = positionLocal.y.clamp(0, 1)
+            // const fakeWind = vec2(1, 1)
+            return positionLocal.add(vec3(wind.x, 0, wind.y).mul(multiplier))
+        })()
     }
 
     setInstancedMesh()
     {
-        this.mesh = new THREE.InstancedMesh(this.geometry, this.material, this.items.length)
+        this.mesh = new THREE.Mesh(this.geometry, this.material)
+        this.mesh.count = this.items.length
         this.mesh.frustumCulled = false
-        this.mesh.instanceMatrix.setUsage(THREE.StaticDrawUsage)
+        // this.mesh.instanceMatrix.setUsage(THREE.StaticDrawUsage)
         this.game.scene.add(this.mesh)
+
+        this.instanceMatrix = new THREE.InstancedBufferAttribute(new Float32Array(this.mesh.count * 16), 16)
+        this.instanceMatrix.setUsage(THREE.DynamicDrawUsage)
         
         let i = 0
         for(const _item of this.items)
         {
-            this.mesh.setMatrixAt(i, _item)
+            // this.mesh.setMatrixAt(i, _item)
+            _item.toArray(this.instanceMatrix.array, i * 16)
             i++
         }
-        this.mesh.instanceMatrix.needsUpdate = true;
 
         // this.game.time.events.on('tick', () =>
         // {

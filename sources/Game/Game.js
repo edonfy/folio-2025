@@ -64,9 +64,9 @@ export class Game
         this.resources = new Resources()
         this.physics = new Physics()
         this.groundData = new GroundData()
-        this.world = new World()
-        this.vehicle = new Vehicle()
         this.view = new View()
+        this.vehicle = new Vehicle()
+        this.world = new World()
         this.rendering = new Rendering()
         // this.monitoring = new Monitoring()
     }
