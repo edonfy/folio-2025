@@ -31,8 +31,9 @@ export class World
 
     setBushes()
     {
-        // Clusters
         const towardCamera = this.game.view.spherical.offset.clone().normalize()
+
+        // Clusters
         const items = []
 
         for(let i = 0; i < 80; i++)
@@ -45,7 +46,7 @@ export class World
             const clusterCount = 3 + Math.floor(Math.random() * 5)
             for(let j = 3; j < clusterCount; j++)
             {
-                const size = remap(Math.random(), 0, 1, 0.3, 1)
+                const size = remap(Math.random(), 0, 1, 0.5, 1.25)
 
                 const object = new THREE.Object3D()
                 
@@ -59,19 +60,8 @@ export class World
                     clusterPosition.y + (Math.random() - 0.5) * 3
                 )
 
-
-                
-                // const euler = new THREE.Euler().setFromVector3(towardCamera)
-                // const quaternion = new THREE.Quaternion().setFromEuler(euler)
-                // const axisQuaternion = new THREE.Quaternion().setFromAxisAngle(towardCamera, Math.random() * Math.PI * 2)
-                // quaternion.multiply(axisQuaternion)
-
-                object.updateMatrix()
-
                 object.scale.setScalar(size)
-
-                // const matrix = new THREE.Matrix4()
-                // matrix.compose(position, quaternion, scale)
+                object.updateMatrix()
 
                 items.push(object.matrix)
             }
@@ -79,13 +69,12 @@ export class World
 
         // // One
         // const items = []
-        // const position = new THREE.Vector3(0, 0.5, 2)
-        // const quaternion = new THREE.Quaternion()
-        // const scale = new THREE.Vector3(1, 1, 1)
+        // const object = new THREE.Object3D()
+        // object.lookAt(towardCamera)
+        // object.position.z = 4
+        // object.updateMatrix()
 
-        // const matrix = new THREE.Matrix4()
-        // matrix.compose(position, quaternion, scale)
-        // items.push(matrix)
+        // items.push(object.matrix)
 
         // // Grid
         // const items = []
@@ -94,16 +83,20 @@ export class World
         // {
         //     for(let j = 0; j < subdivisions; j++)
         //     {
-        //         const x = ((i / subdivisions) - 0.5) * subdivisions * 3
-        //         const z = ((j / subdivisions) - 0.5) * subdivisions * 3
+        //         const x = ((i / subdivisions) - 0.5) * subdivisions * 10
+        //         const z = ((j / subdivisions) - 0.5) * subdivisions * 10
 
-        //         const position = new THREE.Vector3(x, 0, z)
-        //         const quaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.random() * 999, 0))
-        //         const scale = new THREE.Vector3(1, 1, 1)
+        //         const object = new THREE.Object3D()
+                
+        //         const angle = Math.PI * 2 * Math.random()
+        //         object.up.set(Math.sin(angle), Math.cos(angle), 0)
+        //         object.lookAt(towardCamera)
 
-        //         const matrix = new THREE.Matrix4()
-        //         matrix.compose(position, quaternion, scale)
-        //         items.push(matrix)
+        //         object.position.set(x, 0.25, z)
+
+        //         object.updateMatrix()
+
+        //         items.push(object.matrix)
         //     }
         // }
 

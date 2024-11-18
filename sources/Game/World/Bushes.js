@@ -24,6 +24,23 @@ export class Bushes
                 this.init()
             }
         )
+
+        // const test = new THREE.Mesh(
+        //     new THREE.SphereGeometry(1, 32, 32),
+        //     new THREE.MeshLambertNodeMaterial()
+        // )
+        // test.castShadow = true
+        // test.receiveShadow = true
+        // test.position.y = 1
+        // test.position.z = 5
+        // this.game.scene.add(test)
+
+        // test.material.shadowPositionNode = Fn( () =>
+        // {
+        //     const pos = positionWorld.toVar()
+        //     pos.z.addAssign(-2)
+        //     return pos
+        // })()
     }
 
     init()
@@ -109,14 +126,16 @@ export class Bushes
             return positionLocal.add(vec3(wind.x, 0, wind.y).mul(multiplier))
         })()
 
-        // Shadow
-        const totalShadows = float(1).toVar()
-        // this.material.castShadowNode = Fn(([ shadow ]) => 
+        // // Shadow cast
+        // this.material.shadowPositionNode = Fn( () =>
         // {
-        //     totalShadows.mulAssign(shadow)
+        //     const pos = positionLocal.toVar().add(vec3(1000, 2, 0))
+        //     // pos.xz.addAssign( mx_fractal_noise_vec3( positionWorld.mul( 2 ) ).saturate().xz )
+        //     return pos
+        // })()
 
-        //     return float(1)
-        // })
+        // Shadow receive
+        const totalShadows = float(1).toVar()
         this.material.receivedShadowNode = Fn(([ shadow ]) => 
         {
             totalShadows.mulAssign(shadow)

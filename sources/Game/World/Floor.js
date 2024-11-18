@@ -8,7 +8,7 @@ export class Floor
     {
         this.game = new Game()
 
-        this.setVisual()
+        // this.setVisual()
         this.setPhysical()
     }
 
