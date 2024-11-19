@@ -8,12 +8,12 @@ export class Lighting
     {
         this.game = new Game()
 
-        this.spherical = new THREE.Spherical(50, 1.44, 1.31)
+        this.spherical = new THREE.Spherical(25, 1.44, 1.31)
         this.direction = new THREE.Vector3().setFromSpherical(this.spherical).normalize()
         this.directionUniform = uniform(this.direction)
-        this.count = 2
+        this.count = 1
         this.lights = []
-        this.mapSizeMin = 128
+        this.mapSizeMin = 512
         this.shadowAmplitude = 20
         this.near = 1
         this.depth = 100

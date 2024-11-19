@@ -71,7 +71,7 @@ export class World
         // const items = []
         // const object = new THREE.Object3D()
         // object.lookAt(towardCamera)
-        // object.position.z = 4
+        // object.position.z = -4
         // object.updateMatrix()
 
         // items.push(object.matrix)

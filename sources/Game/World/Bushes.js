@@ -31,14 +31,32 @@ export class Bushes
         // )
         // test.castShadow = true
         // test.receiveShadow = true
-        // test.position.y = 1
+        // test.position.y = 2
         // test.position.z = 5
         // this.game.scene.add(test)
 
         // test.material.shadowPositionNode = Fn( () =>
         // {
         //     const pos = positionWorld.toVar()
-        //     pos.z.addAssign(-2)
+        //     pos.z.addAssign(2)
+        //     return pos
+        // })()
+
+        // const plane = new THREE.Mesh(
+        //     new THREE.PlaneGeometry(20, 20),
+        //     new THREE.MeshLambertNodeMaterial()
+        // )
+        // // plane.castShadow = true
+        // plane.receiveShadow = true
+        // plane.position.y = 0.6
+        // plane.position.z = 5
+        // plane.rotation.x = - Math.PI * 0.5
+        // this.game.scene.add(plane)
+
+        // plane.material.shadowPositionNode = Fn( () =>
+        // {
+        //     const pos = positionWorld.toVar()
+        //     pos.z.addAssign(2)
         //     return pos
         // })()
     }
@@ -126,13 +144,9 @@ export class Bushes
             return positionLocal.add(vec3(wind.x, 0, wind.y).mul(multiplier))
         })()
 
-        // // Shadow cast
-        // this.material.shadowPositionNode = Fn( () =>
-        // {
-        //     const pos = positionLocal.toVar().add(vec3(1000, 2, 0))
-        //     // pos.xz.addAssign( mx_fractal_noise_vec3( positionWorld.mul( 2 ) ).saturate().xz )
-        //     return pos
-        // })()
+        // Received shadow position
+        const shadowOffset = uniform(1)
+        this.material.shadowPositionNode = positionLocal.add(this.game.lighting.directionUniform.mul(shadowOffset))
 
         // Shadow receive
         const totalShadows = float(1).toVar()
@@ -148,7 +162,6 @@ export class Bushes
         const colorB = uniform(color('#9eaf33').rgb)
         const colorMix = normalLocal.dot(this.game.lighting.directionUniform).smoothstep(-0.5, 1)
         const finalColor = mix(colorA, colorB, colorMix).varying()
-        // this.material.outputNode = vec4(finalColor, 1)
         this.material.outputNode = vec4(mix(finalColor, colorA, totalShadows.oneMinus()), 1)
 
         // Bushes
@@ -163,6 +176,7 @@ export class Bushes
                 .on('change', tweak => { colorA.value.set(tweak.value) })
             debugPanel.addBinding({ color: colorB.value.getHex(THREE.SRGBColorSpace) }, 'color', { color: { type: 'float' } })
                 .on('change', tweak => { colorB.value.set(tweak.value) })
+            debugPanel.addBinding(shadowOffset, 'value', { label: 'shadowOffset', min: 0, max: 2, step: 0.001 })
         }
     }
 
