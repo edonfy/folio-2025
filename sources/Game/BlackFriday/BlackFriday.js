@@ -146,12 +146,15 @@ export class BlackFriday
             let minDistance = Infinity
             for(const _fragment of this.fragments.list)
             {
-                _fragment.distance = _fragment.position.distanceTo(this.game.vehicle.position)
-
-                if(closest === null || _fragment.distance < minDistance)
+                if(!_fragment.caught)
                 {
-                    closest = _fragment
-                    minDistance = _fragment.distance
+                    _fragment.distance = _fragment.position.distanceTo(this.game.vehicle.position)
+
+                    if(closest === null || _fragment.distance < minDistance)
+                    {
+                        closest = _fragment
+                        minDistance = _fragment.distance
+                    }
                 }
             }
 
@@ -206,6 +209,16 @@ export class BlackFriday
     update()
     {
         const closest = this.fragments.getClosest()
-        this.fragments.tryCatch(closest)
+        if(closest)
+        {
+            this.game.vehicle.antenna.target.copy(closest.position)
+            this.fragments.tryCatch(closest)
+        }
+        else
+        {
+            const forwardTarget = this.game.vehicle.position.clone().add(this.game.vehicle.forward)
+            forwardTarget.y += 1
+            this.game.vehicle.antenna.target.copy(forwardTarget)
+        }
     }
 }

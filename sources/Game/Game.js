@@ -35,7 +35,7 @@ export class Game
             this.resourcesLoader = new ResourcesLoader()
             this.resourcesLoader.load(
                 [
-                    { path: 'bush/bush-leaves-3.png', type: 'texture', name: 'bushLeaves' },
+                    { path: 'bushes/bushesLeaves.png', type: 'texture', name: 'bushesLeaves' },
                     { path: 'noises-256x256.png', type: 'texture', name: 'noisesTexture' },
                     { path: 'vehicle/chassis.glb', type: 'gltf', name: 'vehicleChassis' },
                     { path: 'vehicle/wheel.glb', type: 'gltf', name: 'vehicleWheel' },
@@ -43,6 +43,7 @@ export class Game
                     { path: 'playground/playgroundPhysical.glb', type: 'gltf', name: 'playgroundPhysical' },
                     { path: 'floor/keys.png', type: 'texture', name: 'floorKeysTexture' },
                     { path: 'blackFriday/fragment.glb', type: 'gltf', name: 'fragment' },
+                    // { path: 'bushes/fragment.glb', type: 'gltf', name: 'fragment' },
                 ],
                 (resources) =>
                 {

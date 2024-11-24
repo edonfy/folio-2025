@@ -55,14 +55,6 @@ export class FragmentObject
         this.caught = true
 
         gsap.to(this.group1.position, { y: '+= 1', duration: 2, ease: 'power4.inOut' })
-        // gsap.to(this, { scale: 1.25, delay: 0.75, duration: 1, ease: 'power4.inOut', onComplete: () =>
-        // {
-        //     gsap.to(this, { scale: 0, duration: 0.25, ease: 'power4.in', onComplete: () =>
-        //     {
-        //         this.group2.visible = false
-        //         this.group2.visible = false
-        //     } })
-        // } })
 
         gsap.to(this, { scale: 0, duration: 0.3, delay: 2, ease: 'power4.in', onComplete: () =>
         {

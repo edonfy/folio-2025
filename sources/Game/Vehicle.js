@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { Game } from './Game.js'
 import { Events } from './Events.js'
+import { remapClamp } from './utilities/maths.js'
 
 export class Vehicle
 {
@@ -37,6 +38,7 @@ export class Vehicle
         this.setReset()
         this.setHydraulics()
         this.setBlinkers()
+        this.setAntenna()
 
         this.game.time.events.on('tick', () =>
         {
@@ -53,7 +55,8 @@ export class Vehicle
         this.parts = {}
 
         // Chassis
-        this.parts.chassis = this.game.resources.vehicleChassis.scene.children[0]
+        this.parts.chassis = this.game.resources.vehicleChassis.scene.getObjectByName('chassis')
+        this.parts.chassis.rotation.reorder('YXZ')
         this.parts.chassis.traverse((child) =>
         {
             if(child.isMesh)
@@ -97,6 +100,7 @@ export class Vehicle
                 position: { x: 0, y: 5, z: 0 },
                 friction: 0.4,
                 rotation: new THREE.Quaternion().setFromAxisAngle(new THREE.Euler(0, 1, 0), - Math.PI * 0.4),
+                // rotation: new THREE.Quaternion().setFromAxisAngle(new THREE.Euler(0, 0, 1), - Math.PI * 0.5),
                 colliders: [
                     { shape: 'cuboid', parameters: [ 1.5, 0.3, 0.85 ], position: { x: 0, y: - 0.07, z: 0 } },
                     { shape: 'cuboid', parameters: [ 0.5, 0.15, 0.65 ], position: { x: 0, y: 0.4, z: 0 } },
@@ -320,8 +324,8 @@ export class Vehicle
             // On the side
             else
             {
-                const torqueX = forwardDot * 0.4 * this.chassis.physical.body.mass()
-                const torqueZ = - sidewardDot * 0.8 * this.chassis.physical.body.mass()
+                const torqueX = sidewardDot * 0.4 * this.chassis.physical.body.mass()
+                const torqueZ = - forwardDot * 0.8 * this.chassis.physical.body.mass()
                 const torque = new THREE.Vector3(torqueX, 0, torqueZ)
                 torque.applyQuaternion(this.chassis.physical.body.rotation())
                 this.chassis.physical.body.applyTorqueImpulse(torque)
@@ -456,6 +460,20 @@ export class Vehicle
         })
     }
 
+    setAntenna()
+    {
+        this.antenna = {}
+        this.antenna.target = new THREE.Vector3(0, 2, 0)
+        this.antenna.target = new THREE.Vector3(0, 2, 0)
+        this.antenna.object = this.parts.chassis.getObjectByName('antenna')
+        this.antenna.head = this.game.resources.vehicleChassis.scene.getObjectByName('antennaHead')
+        this.antenna.headAxle = this.antenna.head.children[0]
+        this.antenna.headReference = this.antenna.object.getObjectByName('antennaHeadReference')
+
+        this.game.materials.updateObject(this.antenna.head)
+        this.game.scene.add(this.antenna.head)
+    }
+
     updatePrePhysics()
     {
         let reverseBrake = false
@@ -520,13 +538,13 @@ export class Vehicle
         const newPosition = new THREE.Vector3().copy(this.chassis.physical.body.translation())
         this.direction = newPosition.clone().sub(this.position).normalize()
         this.position.copy(newPosition)
-        this.sideward.set(1, 0, 0).applyQuaternion(this.chassis.physical.body.rotation())
+        this.sideward.set(0, 0, 1).applyQuaternion(this.chassis.physical.body.rotation())
         this.upward.set(0, 1, 0).applyQuaternion(this.chassis.physical.body.rotation())
-        this.forward.set(0, 0, 1).applyQuaternion(this.chassis.physical.body.rotation())
+        this.forward.set(1, 0, 0).applyQuaternion(this.chassis.physical.body.rotation())
         this.speed = this.controller.currentVehicleSpeed()
         this.absoluteSpeed = Math.abs(this.speed)
         this.upsideDownRatio = this.upward.dot(new THREE.Vector3(0, - 1, 0)) * 0.5 + 0.5
-        this.goingForward = this.direction.dot(this.sideward) > 0.5
+        this.goingForward = this.direction.dot(this.forward) > 0.5
 
         // Stop
         if(this.absoluteSpeed < this.stop.lowEdge)
@@ -593,5 +611,17 @@ export class Vehicle
 
         // Ground data focus point
         this.game.groundData.focusPoint.set(this.game.vehicle.position.x, this.game.vehicle.position.z)
+
+        // Antenna
+        // console.log(this.position.z)
+        const angle = Math.atan2(this.antenna.target.x - this.position.x, this.antenna.target.z - this.position.z)
+        this.antenna.object.rotation.y = angle - this.parts.chassis.rotation.y
+        this.antenna.headReference.getWorldPosition(this.antenna.head.position)
+        this.antenna.head.lookAt(this.antenna.target)
+
+        const antennaTargetDistance = this.antenna.target.distanceTo(this.position)
+        
+        const antennaRotationSpeed = remapClamp(antennaTargetDistance, 50, 5, 1, 10)
+        this.antenna.headAxle.rotation.z += this.game.time.deltaScaled * antennaRotationSpeed
     }
 }

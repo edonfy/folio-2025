@@ -76,7 +76,7 @@ export class Bushes
     setMaterial()
     {
         this.material = new THREE.MeshLambertNodeMaterial({
-            alphaMap: this.game.resources.bushLeaves,
+            alphaMap: this.game.resources.bushesLeaves,
             alphaTest: 0.01
         })
     
