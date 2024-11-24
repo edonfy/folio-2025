@@ -63,6 +63,8 @@ export class BlackFriday
         {
             if(!this.intro.visible)
                 return
+
+            this.game.sounds.start()
                 
             this.intro.element.classList.remove('is-active')
             this.intro.visible = false
@@ -119,6 +121,7 @@ export class BlackFriday
         this.fragments.catchDistance = 2
         this.fragments.containerElement = this.element.querySelector('.fragments')
         this.fragments.fragmentElements = this.fragments.containerElement.querySelectorAll('.fragment')
+        this.fragments.closest = null
 
         this.fragments.code = 'abcdef'
         this.fragments.list = [
@@ -171,6 +174,7 @@ export class BlackFriday
 
         this.fragments.catch = (_fragment) =>
         {
+            this.game.sounds.fragments.catch()
             _fragment.object.catch()
             _fragment.caught = true
             _fragment.element.innerHTML = /* html */`
@@ -210,15 +214,16 @@ export class BlackFriday
 
     update()
     {
-        const closest = this.fragments.getClosest()
-        if(closest)
+        this.fragments.closest = this.fragments.getClosest()
+
+        if(this.fragments.closest)
         {
-            this.game.vehicle.antenna.target.copy(closest.position)
-            this.fragments.tryCatch(closest)
+            this.game.vehicle.antenna.target.copy(this.fragments.closest.position)
+            this.fragments.tryCatch(this.fragments.closest)
         }
         else
         {
-            const forwardTarget = this.game.vehicle.position.clone().add(this.game.vehicle.forward)
+            const forwardTarget = this.game.vehicle.position.clone().add(this.game.vehicle.forward.clone().multiplyScalar(35))
             forwardTarget.y += 1
             this.game.vehicle.antenna.target.copy(forwardTarget)
         }

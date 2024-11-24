@@ -10,7 +10,7 @@ function remap(input, inLow, inHigh, outLow, outHigh)
 
 function remapClamp(input, inLow, inHigh, outLow, outHigh)
 {
-    return clamp(((input - inLow) * (outHigh - outLow)) / (inHigh - inLow) + outLow, outLow, outHigh)
+    return clamp(((input - inLow) * (outHigh - outLow)) / (inHigh - inLow) + outLow, outLow < outHigh ? outLow : outHigh, outLow > outHigh ? outLow : outHigh)
 }
 
 function lerp(start, end, ratio)

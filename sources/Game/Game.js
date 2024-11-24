@@ -17,6 +17,7 @@ import { Lighting } from './Ligthing.js'
 import { Materials } from './Materials.js'
 import { Entities } from './Entities.js'
 import { BlackFriday } from './BlackFriday/BlackFriday.js'
+import { Sounds } from './Sounds.js'
 
 export class Game
 {
@@ -90,6 +91,7 @@ export class Game
             { name: 'close', keys: [ 'Escape' ] },
         ])
         this.viewport = new Viewport(this.domElement)
+        this.sounds = new Sounds()
         this.lighting = new Lighting()
         this.materials = new Materials()
         this.entities = new Entities()
