@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { positionLocal, varying, max, positionWorld, float, Fn, uniform, color, mix, vec3, vec4, normalWorld } from 'three'
+import { positionLocal, varying, uv, max, positionWorld, float, Fn, uniform, color, mix, vec3, vec4, normalWorld } from 'three'
 import { Game } from './Game.js'
 import { blendDarken_2 } from './tsl/blendings.js'
 
@@ -38,21 +38,65 @@ export class Materials
 
     setPremades()
     {
-        const createEmissiveTweak = (material) =>
+        // Create materials functions
+        const createEmissiveMaterial = (_name = 'material', _color = '#ffffff', _intensity = '100') =>
         {
-            if(!this.game.debug.active)
-                return false
+            const threeColor = new THREE.Color(_color)
 
+            const dummy = {}
+            dummy.color = threeColor.getHex(THREE.SRGBColorSpace)
+            dummy.intensity = _intensity
+
+            const material = new THREE.MeshBasicNodeMaterial({ color: threeColor })
+            this.save(_name, material)
+            
             const update = () =>
             {
                 material.color.set(dummy.color)
-                material.color.multiplyScalar(material.userData.intensity / this.luminance.get(material.color))
+                material.color.multiplyScalar(dummy.intensity / this.luminance.get(material.color))
             }
 
-            const dummy = { color: material.color.getHex(THREE.SRGBColorSpace) }
-            this.debugPanel.addBinding(material.userData, 'intensity', { min: 0, max: 300, step: 1 }).on('change', update)
-            this.debugPanel.addBinding(dummy, 'color', { view: 'color' }).on('change', update)
+            update()
+
+            if(this.game.debug.active)
+            {
+                const debugPanel = this.debugPanel.addFolder({
+                    title: _name,
+                    expanded: true
+                })
+                debugPanel.addBinding(dummy, 'intensity', { min: 0, max: 300, step: 1 }).on('change', update)
+                debugPanel.addBinding(dummy, 'color', { view: 'color' }).on('change', update)
+            }
         }
+
+        const createGradientMaterial = (_name = 'material', _colorA = 'red', _colorB = 'blue') =>
+        {
+            const threeColorA = new THREE.Color(_colorA)
+            const threeColorB = new THREE.Color(_colorB)
+
+            const material = new THREE.MeshLambertNodeMaterial()
+            material.shadowSide = THREE.BackSide
+            
+            const colorA = uniform(threeColorA)
+            const colorB = uniform(threeColorB)
+            const baseColor = mix(colorA, colorB, uv().y)
+            material.outputNode = this.lightOutputNode(baseColor, this.getTotalShadow(material))
+            
+            this.save(_name, material)
+
+            if(this.game.debug.active)
+            {
+                const debugPanel = this.debugPanel.addFolder({
+                    title: _name,
+                    expanded: true
+                })
+                debugPanel.addBinding({ colorA: threeColorA.getHex(THREE.SRGBColorSpace) }, 'colorA', { view: 'color' }).on('change', (tweak) => { colorA.value.set(tweak.value) })
+                debugPanel.addBinding({ colorB: threeColorB.getHex(THREE.SRGBColorSpace) }, 'colorB', { view: 'color' }).on('change', (tweak) => { colorB.value.set(tweak.value) })
+            }
+        }
+
+        // Car red
+        createGradientMaterial('carRed', '#ff3a3a', '#721551')
 
         // Pure white
         const pureWhite = new THREE.MeshLambertNodeMaterial()
@@ -60,29 +104,14 @@ export class Materials
         pureWhite.outputNode = this.lightOutputNode(color('#ffffff'), this.getTotalShadow(pureWhite))
         this.save('pureWhite', pureWhite)
     
-        // Emissive headlight
-        const emissiveWarnWhite = new THREE.MeshBasicNodeMaterial({ color: '#fba866' })
-        emissiveWarnWhite.name = 'emissiveWarnWhite'
-        emissiveWarnWhite.userData.intensity = 100
-        createEmissiveTweak(emissiveWarnWhite)
-        emissiveWarnWhite.color.multiplyScalar(emissiveWarnWhite.userData.intensity / this.luminance.get(emissiveWarnWhite.color))
-        this.save('emissiveWarnWhite', emissiveWarnWhite)
+        // Emissive warn white
+        createEmissiveMaterial('emissiveWarnWhite', '#ff8641', 100)
     
-        // Emissive red
-        const emissiveRed = new THREE.MeshBasicNodeMaterial({ color: '#ff3131' })
-        emissiveRed.name = 'emissiveRed'
-        emissiveRed.userData.intensity = 100
-        createEmissiveTweak(emissiveRed)
-        emissiveRed.color.multiplyScalar(emissiveRed.userData.intensity / this.luminance.get(emissiveRed.color))
-        this.save('emissiveRed', emissiveRed)
+        // // Emissive red
+        createEmissiveMaterial('emissiveRed', '#ff3131', 100)
     
-        // Emissive red
-        const emissivePurple = new THREE.MeshBasicNodeMaterial({ color: '#9830ff' })
-        emissivePurple.name = 'emissivePurple'
-        emissivePurple.userData.intensity = 30
-        createEmissiveTweak(emissivePurple)
-        emissivePurple.color.multiplyScalar(emissivePurple.userData.intensity / this.luminance.get(emissivePurple.color))
-        this.save('emissivePurple', emissivePurple)
+        // // Emissive red
+        createEmissiveMaterial('emissivePurple', '#9830ff', 100)
     }
 
     setNodes()
@@ -130,14 +159,10 @@ export class Materials
 
             // Combined shadows
             const combinedShadowMix = max(coreShadowMix, castShadowMix)
-            // const combinedShadowMix = coreShadowMix.add(castShadowMix).min(1)
             
             const shadowColor = colorBase.rgb.mul(this.shadowColor).rgb
             finalColor.assign(mix(finalColor, shadowColor, combinedShadowMix))
             
-            // finalColor.assign(blendDarken_2(finalColor.rgb, this.shadowColor, combinedShadowMix))
-            
-            // return vec4(vec3(combinedShadowMix.oneMinus()), 1)
             return vec4(finalColor.rgb, 1)
         })
         
@@ -165,7 +190,7 @@ export class Materials
         this.tests.sphereGeometry = new THREE.IcosahedronGeometry(1, 3)
         this.tests.boxGeometry = new THREE.BoxGeometry(1.5, 1.5, 1.5)
         this.tests.group = new THREE.Group()
-        this.tests.group.visible = false
+        this.tests.group.visible = true
         this.game.scene.add(this.tests.group)
         
         this.tests.update = () =>
@@ -256,8 +281,6 @@ export class Materials
             material.shadowSide = THREE.BackSide
             material.outputNode = this.lightOutputNode(baseMaterial.color, this.getTotalShadow(material))
         }
-
-        material.name = baseMaterial.name
 
         return material
     }

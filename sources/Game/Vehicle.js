@@ -55,7 +55,7 @@ export class Vehicle
         this.parts = {}
 
         // Chassis
-        this.parts.chassis = this.game.resources.vehicleChassis.scene.getObjectByName('chassis')
+        this.parts.chassis = this.game.resources.vehicle.scene.getObjectByName('chassis')
         this.parts.chassis.rotation.reorder('YXZ')
         this.parts.chassis.traverse((child) =>
         {
@@ -79,7 +79,7 @@ export class Vehicle
         this.parts.stopLights.visible = false
 
         // Wheel
-        this.parts.wheel = this.game.resources.vehicleWheel.scene.children[0]
+        this.parts.wheel = this.game.resources.vehicle.scene.getObjectByName('wheel')
         this.parts.wheel.traverse((child) =>
         {
             if(child.isMesh)
@@ -462,11 +462,16 @@ export class Vehicle
 
     setAntenna()
     {
+        const object = this.parts.chassis.getObjectByName('antenna')
+
+        if(!object)
+            return
+
         this.antenna = {}
         this.antenna.target = new THREE.Vector3(0, 2, 0)
         this.antenna.target = new THREE.Vector3(0, 2, 0)
-        this.antenna.object = this.parts.chassis.getObjectByName('antenna')
-        this.antenna.head = this.game.resources.vehicleChassis.scene.getObjectByName('antennaHead')
+        this.antenna.object = object
+        this.antenna.head = this.game.resources.vehicle.scene.getObjectByName('antennaHead')
         this.antenna.headAxle = this.antenna.head.children[0]
         this.antenna.headReference = this.antenna.object.getObjectByName('antennaHeadReference')
 
@@ -617,15 +622,17 @@ export class Vehicle
         this.game.groundData.focusPoint.set(this.game.vehicle.position.x, this.game.vehicle.position.z)
 
         // Antenna
-        // console.log(this.position.z)
-        const angle = Math.atan2(this.antenna.target.x - this.position.x, this.antenna.target.z - this.position.z)
-        this.antenna.object.rotation.y = angle - this.parts.chassis.rotation.y
-        this.antenna.headReference.getWorldPosition(this.antenna.head.position)
-        this.antenna.head.lookAt(this.antenna.target)
+        if(this.antenna)
+        {
+            const angle = Math.atan2(this.antenna.target.x - this.position.x, this.antenna.target.z - this.position.z)
+            this.antenna.object.rotation.y = angle - this.parts.chassis.rotation.y
+            this.antenna.headReference.getWorldPosition(this.antenna.head.position)
+            this.antenna.head.lookAt(this.antenna.target)
 
-        const antennaTargetDistance = this.antenna.target.distanceTo(this.position)
-        
-        const antennaRotationSpeed = remapClamp(antennaTargetDistance, 50, 5, 1, 10)
-        this.antenna.headAxle.rotation.z += this.game.time.deltaScaled * antennaRotationSpeed
+            const antennaTargetDistance = this.antenna.target.distanceTo(this.position)
+            
+            const antennaRotationSpeed = remapClamp(antennaTargetDistance, 50, 5, 1, 10)
+            this.antenna.headAxle.rotation.z += this.game.time.deltaScaled * antennaRotationSpeed
+        }
     }
 }
