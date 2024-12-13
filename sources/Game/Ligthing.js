@@ -6,7 +6,7 @@ export class Lighting
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.spherical = new THREE.Spherical(25, 1.34, 1.31)
         this.direction = new THREE.Vector3().setFromSpherical(this.spherical).normalize()

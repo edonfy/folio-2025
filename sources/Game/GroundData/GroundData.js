@@ -7,7 +7,7 @@ export class GroundData
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.resolution = 512
         this.size = 30

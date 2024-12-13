@@ -6,7 +6,7 @@ export class Fog
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
         
         this.color = uniform(color('#00f4ff'))
         this.game.scene.backgroundNode = this.color

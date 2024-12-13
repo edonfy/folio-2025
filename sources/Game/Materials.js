@@ -7,7 +7,7 @@ export class Materials
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
         this.list = new Map()
 
         if(this.game.debug.active)

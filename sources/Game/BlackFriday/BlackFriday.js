@@ -6,7 +6,7 @@ export class BlackFriday
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.element = document.querySelector('.black-friday')
 

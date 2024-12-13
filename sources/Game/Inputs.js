@@ -8,7 +8,7 @@ export class Inputs
 {
     constructor(_map)
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
         this.events = new Events()
 
         this.map = _map

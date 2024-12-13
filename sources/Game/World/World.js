@@ -11,7 +11,7 @@ export class World
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.floor = new Floor()
         this.grass = new Grass()

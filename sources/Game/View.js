@@ -10,7 +10,7 @@ export class View
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.mode = 'default'
         this.position = new THREE.Vector3()

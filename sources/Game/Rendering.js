@@ -7,7 +7,7 @@ export class Rendering
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         if(this.game.debug.active)
         {

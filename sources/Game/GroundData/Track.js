@@ -6,7 +6,7 @@ export class Track
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.subdivisions = 128
 

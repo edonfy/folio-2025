@@ -7,7 +7,7 @@ export class Grass
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.subdivisions = 500
         this.size = 80

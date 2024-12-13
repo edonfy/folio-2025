@@ -6,7 +6,7 @@ export class FragmentObject
 {
     constructor(_position)
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.caught = false
         

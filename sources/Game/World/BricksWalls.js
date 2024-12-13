@@ -5,7 +5,7 @@ export class BricksWalls
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.geometry = this.game.resources.bricksWalls.scene.children[0].geometry
         this.bricks = [...this.game.resources.bricksWalls.scene.children]

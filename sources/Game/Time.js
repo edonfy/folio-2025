@@ -5,7 +5,7 @@ export class Time
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.elapsed = 0
         this.delta = 1 / 60

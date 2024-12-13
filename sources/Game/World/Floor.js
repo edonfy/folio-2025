@@ -7,7 +7,7 @@ export class Floor
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         // this.setGrid()
         this.setGround()

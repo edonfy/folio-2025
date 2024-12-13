@@ -5,7 +5,7 @@ export class Monitoring
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         // No debug
         if(!this.game.debug.active)

@@ -5,7 +5,7 @@ export class Debug
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
         
         this.active = location.hash.indexOf('debug') !== -1
 

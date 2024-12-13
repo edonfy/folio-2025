@@ -9,7 +9,7 @@ export class Bushes
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.items = this.getFromModel()
         // this.items = this.getOne()

@@ -6,7 +6,7 @@ export class Physics
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.world = new RAPIER.World({ x: 0.0, y: -9.81, z: 0.0 })
 

@@ -17,9 +17,15 @@ import { Lighting } from './Ligthing.js'
 import { Materials } from './Materials.js'
 import { Entities } from './Entities.js'
 import { Fog } from './Fog.js'
+import { Cycles } from './Cycles.js'
 
 export class Game
 {
+    static getInstance()
+    {
+        return Game.instance
+    }
+
     constructor()
     {
         // Singleton
@@ -87,6 +93,7 @@ export class Game
         ])
         this.viewport = new Viewport(this.domElement)
         // this.sounds = new Sounds()
+        this.cycles = new Cycles()
         this.lighting = new Lighting()
         this.fog = new Fog()
         this.materials = new Materials()

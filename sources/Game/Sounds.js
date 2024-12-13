@@ -6,7 +6,7 @@ export class Sounds
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.setMusic()
         this.setFragments()

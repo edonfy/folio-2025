@@ -4,7 +4,7 @@ export class Playground
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
 
         this.game.entities.addFromModels(
             this.game.resources.playgroundPhysical.scene,

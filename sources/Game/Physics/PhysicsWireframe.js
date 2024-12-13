@@ -5,7 +5,7 @@ export class PhysicsWireframe
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
         this.active = false
 
         this.geometry = new THREE.BufferGeometry()

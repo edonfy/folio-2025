@@ -4,7 +4,7 @@ export class Entities
 {
     constructor()
     {
-        this.game = new Game()
+        this.game = Game.getInstance()
         this.list = new Map()
         this.key = 0
 
