@@ -150,15 +150,19 @@ export class Materials
             return totalShadows
         }
 
+
         // Light output
         this.lightOutputNode = Fn(([inputColor, totalShadows]) =>
         {
             const baseColor = inputColor.toVar()
 
+            const terrainData = this.game.materials.terrainDataNode(positionWorld.xz.div(256).add(0.5))
+
             // Bounce color
             const bounceOrientation = normalWorld.dot(vec3(0, - 1, 0)).smoothstep(this.lightBounceEdgeLow, this.lightBounceEdgeHigh)
             const bounceDistance = this.lightBounceDistance.sub(positionWorld.y).div(this.lightBounceDistance).max(0).pow(2)
-            baseColor.assign(mix(baseColor, this.lightBounceColor, bounceOrientation.mul(bounceDistance).mul(this.lightBounceMultiplier)))
+            const bounceColor = this.terrainColorNode(terrainData)
+            baseColor.assign(mix(baseColor, bounceColor, bounceOrientation.mul(bounceDistance).mul(this.lightBounceMultiplier)))
 
             // Light
             const lightenColor = baseColor.mul(this.game.lighting.colorUniform.mul(this.game.lighting.intensityUniform))
