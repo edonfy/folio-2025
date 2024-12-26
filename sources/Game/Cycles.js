@@ -32,7 +32,7 @@ export class Cycles
     setDay()
     {
         this.day = {}
-        this.day.progress = 0.25
+        this.day.progress = 0
         this.day.speed = 0.01
         this.day.auto = true
 

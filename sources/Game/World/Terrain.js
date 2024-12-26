@@ -12,6 +12,14 @@ export class Terrain
         this.geometry = this.game.resources.terrainModel.scene.children[0].geometry
         this.subdivision = 256
 
+        if(this.game.debug.active)
+        {
+            this.debugPanel = this.game.debug.panel.addFolder({
+                title: '🏔️ Terrain',
+                expanded: true,
+            })
+        }
+
         // this.setGrid()
         this.setGround()
         // this.setKeys()
@@ -171,17 +179,22 @@ export class Terrain
 
         const totalShadow = this.game.materials.getTotalShadow(material)
 
+        const timeFrequency = uniform(0.01)
+        const slopeFrequency = uniform(10)
+        const noiseFrequency = uniform(0.1)
+        const threshold = uniform(-0.2)
+
         material.outputNode = Fn(() =>
         {
             const terrainUv = this.game.materials.terrainUvNode(positionWorld.xz)
             const terrainData = this.game.materials.terrainDataNode(terrainUv)
             
-            const baseRipple = terrainData.b.add(time.mul(0.01)).mul(10).toVar()
+            const baseRipple = terrainData.b.add(time.mul(timeFrequency)).mul(slopeFrequency).toVar()
             const rippleId = baseRipple.floor()
-            const noise = texture(this.game.resources.noisesTexture, positionWorld.xz.add(rippleId.div(0.345)).mul(0.1)).r
+            const noise = texture(this.game.resources.noisesTexture, positionWorld.xz.add(rippleId.div(0.345)).mul(noiseFrequency)).r
             const ripple = baseRipple.mod(1).sub(terrainData.b.oneMinus()).add(noise)
 
-            ripple.greaterThan(-0.2).discard()
+            ripple.greaterThan(threshold).discard()
             
             return this.game.materials.lightOutputNodeBuilder(vec3(1), totalShadow, false, false)
         })()
@@ -191,6 +204,19 @@ export class Terrain
         // this.waterSurface.position.y = 3
         this.waterSurface.receiveShadow = true
         this.game.scene.add(this.waterSurface)
+
+        if(this.game.debug.active)
+        {
+            const debugPanel = this.game.debug.panel.addFolder({
+                title: 'Water',
+                expanded: true,
+            })
+
+            debugPanel.addBinding(timeFrequency, 'value', { label: 'timeFrequency', min: 0, max: 0.1, step: 0.001 })
+            debugPanel.addBinding(slopeFrequency, 'value', { label: 'slopeFrequency', min: 0, max: 50, step: 0.01 })
+            debugPanel.addBinding(noiseFrequency, 'value', { label: 'noiseFrequency', min: 0, max: 1, step: 0.01 })
+            debugPanel.addBinding(threshold, 'value', { label: 'threshold', min: -1, max: 0, step: 0.01 })
+        }
     }
 
     update()

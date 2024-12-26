@@ -131,13 +131,17 @@ export class Materials
         this.cloudsSpeed = uniform(1)
         this.cloudsEdgeLow = uniform(0.2)
         this.cloudsEdgeHigh = uniform(0.5)
-        this.cloudsEdgeMultiplier = uniform(0.7)
+        this.cloudsMultiplier = uniform(0.7)
+
+        this.waterThreshold = uniform(-0.3)
+        this.waterAmplitude = uniform(0.3)
+        this.waterPower = uniform(5)
 
         // Get total shadow
         this.getTotalShadow = (material) =>
         {
             const cloudsUv = positionWorld.xz.add(vec2(time.mul(this.cloudsSpeed.negate()), time.mul(this.cloudsSpeed))).mul(this.cloudsFrequency)
-            const clouds = texture(this.game.resources.noisesTexture, cloudsUv).r.smoothstep(this.cloudsEdgeLow, this.cloudsEdgeHigh).mul(this.cloudsEdgeMultiplier).add(this.cloudsEdgeMultiplier.oneMinus())
+            const clouds = texture(this.game.resources.noisesTexture, cloudsUv).r.smoothstep(this.cloudsEdgeLow, this.cloudsEdgeHigh).mul(this.cloudsMultiplier).add(this.cloudsMultiplier.oneMinus())
 
             const totalShadows = clouds.toVar()
 
@@ -149,7 +153,6 @@ export class Materials
 
             return totalShadows
         }
-
 
         // Light output
         this.lightOutputNodeBuilder = function(inputColor, totalShadows, withBounce = true, withWater = true)
@@ -174,7 +177,7 @@ export class Materials
                 // Water
                 if(withWater)
                 {
-                    const waterMix = positionWorld.y.remapClamp(- 0.3, -0.8, 1, 0).mul(positionWorld.y.step(-0.3)).pow(3).mul(1)
+                    const waterMix = positionWorld.y.remapClamp(this.waterThreshold, this.waterThreshold.sub(this.waterAmplitude), 1, 0).mul(positionWorld.y.step(this.waterThreshold)).pow(this.waterPower).mul(1)
                     baseColor.assign(mix(baseColor, color('#ffffff'), waterMix))
                 }
 
@@ -250,14 +253,22 @@ export class Materials
             this.debugPanel.addBinding(this.cloudsSpeed, 'value', { label: 'cloudsSpeed', min: 0, max: 10, step: 0.01 })
             this.debugPanel.addBinding(this.cloudsEdgeLow, 'value', { label: 'cloudsEdgeLow', min: 0, max: 1, step: 0.001 })
             this.debugPanel.addBinding(this.cloudsEdgeHigh, 'value', { label: 'cloudsEdgeHigh', min: 0, max: 1, step: 0.001 })
-            this.debugPanel.addBinding(this.cloudsEdgeMultiplier, 'value', { label: 'cloudsEdgeMultiplier', min: 0, max: 1, step: 0.001 })
+            this.debugPanel.addBinding(this.cloudsMultiplier, 'value', { label: 'cloudsMultiplier', min: 0, max: 1, step: 0.001 })
 
             this.debugPanel.addBlade({ view: 'separator' })
             this.game.debug.addThreeColorBinding(this.debugPanel, this.grassColorUniform.value, 'grassColor')
             this.game.debug.addThreeColorBinding(this.debugPanel, this.dirtColorUniform.value, 'dirtColorUniform')
             this.game.debug.addThreeColorBinding(this.debugPanel, this.waterSurfaceColorUniform.value, 'waterSurfaceColorUniform')
             this.game.debug.addThreeColorBinding(this.debugPanel, this.waterDepthColorUniform.value, 'waterDepthColorUniform')
+
+            this.debugPanel.addBlade({ view: 'separator' })
+            this.debugPanel.addBinding(this.waterThreshold, 'value', { label: 'waterThreshold', min: -1, max: 0, step: 0.001 })
+            this.debugPanel.addBinding(this.waterAmplitude, 'value', { label: 'waterAmplitude', min: 0, max: 2, step: 0.001 })
+            this.debugPanel.addBinding(this.waterPower, 'value', { label: 'waterPower', min: 1, max: 10, step: 1 })
         }
+        // this.waterThreshold = uniform(-0.3)
+        // this.waterAmplitude = uniform(0.5)
+        // this.waterPower = uniform(3)
     }
 
     setTest()
