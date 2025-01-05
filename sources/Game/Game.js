@@ -20,6 +20,7 @@ import { Fog } from './Fog.js'
 import { Cycles } from './Cycles.js'
 import { Noises } from './Noises.js'
 import { Wind } from './Wind.js'
+import { TerrainData } from './TerrainData.js'
 
 export class Game
 {
@@ -110,6 +111,7 @@ export class Game
         // this.sounds = new Sounds()
         this.cycles = new Cycles()
         this.wind = new Wind()
+        this.terrainData = new TerrainData()
         this.lighting = new Lighting()
         this.fog = new Fog()
         this.materials = new Materials()

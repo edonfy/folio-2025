@@ -95,8 +95,8 @@ export class Grass
                 0,
         ])
 
-        const terrainUv = this.game.materials.worldToTerrainUv(bladePosition)
-        const terrainData = this.game.materials.terrainDataNode(terrainUv)
+        const terrainUv = this.game.terrainData.worldPositionToUvNode(bladePosition)
+        const terrainData = this.game.terrainData.terrainDataNode(terrainUv)
         const terrainDataGrass = terrainData.g.smoothstep(0.4, 0.6)
 
         this.material.positionNode = Fn(() =>
@@ -152,7 +152,7 @@ export class Grass
         // Shadow
         const totalShadows = this.game.materials.getTotalShadow(this.material)
 
-        let baseColor = this.game.materials.terrainColorNode(terrainData)
+        let baseColor = this.game.terrainData.colorNode(terrainData)
 
         const normal = mix(vec3(0, 1, 0), vec3(1, 1, 1), terrainDataGrass.smoothstep(0.8, 1)).normalize()
         

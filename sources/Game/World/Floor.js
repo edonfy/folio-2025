@@ -3,47 +3,47 @@ import { Game } from '../Game.js'
 import MeshGridMaterial, { MeshGridMaterialLine } from '../Materials/MeshGridMaterial.js'
 import { uv } from 'three/tsl'
 
-export class Terrain
+export class Floor
 {
     constructor()
     {
         this.game = Game.getInstance()
 
         this.geometry = this.game.resources.terrainModel.scene.children[0].geometry
-        // this.geometry = new THREE.PlaneGeometry(256, 256).rotateX(-Math.PI * 0.5)
-        this.subdivision = 256
+        // this.geometry = new THREE.PlaneGeometry(this.game.terrainData.subdivision, this.game.terrainData.subdivision).rotateX(-Math.PI * 0.5)
+        this.subdivision = this.game.terrainData.subdivision
 
         if(this.game.debug.active)
         {
             this.debugPanel = this.game.debug.panel.addFolder({
-                title: '🏔️ Terrain',
+                title: 'Floor',
                 expanded: false,
             })
         }
 
         // this.setGrid()
-        this.setGroundMesh()
+        this.setMesh()
         // this.setKeys()
         // this.setPhysicalBox()
         this.setPhysicalHeightfield()
     }
 
-    setGroundMesh()
+    setMesh()
     {
         const material = new THREE.MeshLambertNodeMaterial({ color: '#000000', wireframe: false })
 
-        const terrainData = this.game.materials.terrainDataNode(uv())
+        const terrainData = this.game.terrainData.terrainDataNode(uv())
         const terrainDataGrass = terrainData.g.smoothstep(0.4, 0.6)
-        const baseColor = this.game.materials.terrainColorNode(terrainData)
+        const baseColor = this.game.terrainData.colorNode(terrainData)
 
         const totalShadow = this.game.materials.getTotalShadow(material).mul(terrainDataGrass.oneMinus())
 
         material.outputNode = this.game.materials.lightOutputNodeBuilder(baseColor.rgb, totalShadow, false, false)
 
-        this.ground = new THREE.Mesh(this.geometry, material)
-        this.ground.receiveShadow = true
-        // this.ground.castShadow = true
-        this.game.scene.add(this.ground)
+        this.mesh = new THREE.Mesh(this.geometry, material)
+        this.mesh.receiveShadow = true
+        // this.mesh.castShadow = true
+        this.game.scene.add(this.mesh)
     }
 
     setKeys()

@@ -162,14 +162,14 @@ export class Materials
 
                 if(withBounce)
                 {
-                    const terrainUv = this.game.materials.worldToTerrainUv(positionWorld.xz)
-                    const terrainData = this.terrainDataNode(terrainUv)
+                    const terrainUv = this.game.terrainData.worldPositionToUvNode(positionWorld.xz)
+                    const terrainData = this.game.terrainData.terrainDataNode(terrainUv)
 
                     // Bounce color
                     const bounceOrientation = normalWorld.dot(vec3(0, - 1, 0)).smoothstep(this.lightBounceEdgeLow, this.lightBounceEdgeHigh)
                     const bounceDistance = this.lightBounceDistance.sub(positionWorld.y).div(this.lightBounceDistance).max(0).pow(2)
                     // const bounceWater = positionWorld.y.step(-0.3).mul(0.9).add(1)
-                    const bounceColor = this.terrainColorNode(terrainData)
+                    const bounceColor = this.game.terrainData.colorNode(terrainData)
                     baseColor.assign(mix(baseColor, bounceColor, bounceOrientation.mul(bounceDistance).mul(this.lightBounceMultiplier)))
                 }
 
@@ -210,38 +210,6 @@ export class Materials
             })([inputColor, totalShadows])
         }
 
-        // Terrain color
-        this.grassColorUniform = uniform(color('#9eaf33'))
-        this.dirtColorUniform = uniform(color('#ffb869'))
-        this.waterSurfaceColorUniform = uniform(color('#5dc278'))
-        this.waterDepthColorUniform = uniform(color('#1b3e52'))
-
-        this.worldToTerrainUv = Fn(([coordinate]) =>
-        {
-            const terrainUv = coordinate.div(256).add(0.5).toVar()
-            return terrainUv
-        })
-
-        this.terrainDataNode = Fn(([coordinate]) =>
-        {
-            return texture(this.game.resources.terrainTexture, coordinate)
-        })
-        
-        this.terrainColorNode = Fn(([terrainData]) =>
-        {
-            // Dirt
-            const baseColor = color(this.dirtColorUniform).toVar()
-
-            // Grass
-            baseColor.assign(mix(baseColor, this.grassColorUniform, terrainData.g))
-
-            // Water
-            baseColor.assign(mix(baseColor, this.waterSurfaceColorUniform, smoothstep(0, 0.3, terrainData.b)))
-            baseColor.assign(mix(baseColor, this.waterDepthColorUniform, smoothstep(0.3, 1, terrainData.b)))
-
-            return baseColor.rgb
-        })
-        
         // Debug
         if(this.game.debug.active)
         {
@@ -263,19 +231,10 @@ export class Materials
             this.debugPanel.addBinding(this.cloudsMultiplier, 'value', { label: 'cloudsMultiplier', min: 0, max: 1, step: 0.001 })
 
             this.debugPanel.addBlade({ view: 'separator' })
-            this.game.debug.addThreeColorBinding(this.debugPanel, this.grassColorUniform.value, 'grassColor')
-            this.game.debug.addThreeColorBinding(this.debugPanel, this.dirtColorUniform.value, 'dirtColorUniform')
-            this.game.debug.addThreeColorBinding(this.debugPanel, this.waterSurfaceColorUniform.value, 'waterSurfaceColorUniform')
-            this.game.debug.addThreeColorBinding(this.debugPanel, this.waterDepthColorUniform.value, 'waterDepthColorUniform')
-
-            this.debugPanel.addBlade({ view: 'separator' })
             this.debugPanel.addBinding(this.waterThreshold, 'value', { label: 'waterThreshold', min: -1, max: 0, step: 0.001 })
             this.debugPanel.addBinding(this.waterAmplitude, 'value', { label: 'waterAmplitude', min: 0, max: 2, step: 0.001 })
             this.debugPanel.addBinding(this.waterPower, 'value', { label: 'waterPower', min: 1, max: 10, step: 1 })
         }
-        // this.waterThreshold = uniform(-0.3)
-        // this.waterAmplitude = uniform(0.5)
-        // this.waterPower = uniform(3)
     }
 
     setTest()

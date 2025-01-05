@@ -2,7 +2,7 @@ import * as THREE from 'three/webgpu'
 import { Game } from '../Game.js'
 import { Foliage } from './Foliage.js'
 import { Flowers } from './Flowers.js'
-import { Terrain } from './Terrain.js'
+import { Floor } from './Floor.js'
 import { Grass } from './Grass.js'
 import { Playground } from './Playground.js'
 import { Bricks } from './Bricks.js'
@@ -19,7 +19,7 @@ export class World
     {
         this.game = Game.getInstance()
 
-        this.terrain = new Terrain()
+        this.floor = new Floor()
         this.waterSurface = new WaterSurface()
         this.grass = new Grass()
         this.bushes = new Bushes()
