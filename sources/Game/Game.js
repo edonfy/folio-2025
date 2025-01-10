@@ -62,6 +62,7 @@ export class Game
                     { path: 'oakTrees/oakTreesReferences.glb', type: 'gltf', name: 'oakTreesReferencesModel' },
                     { path: 'cherryTrees/cherryTreesVisual.glb', type: 'gltf', name: 'cherryTreesVisualModel' },
                     { path: 'cherryTrees/cherryTreesReferences.glb', type: 'gltf', name: 'cherryTreesReferencesModel' },
+                    { path: 'scenery/sceneryVisual.glb', type: 'gltf', name: 'sceneryVisualModel' },
                     
                     // { path: 'christmas/christmasTreeVisual.glb', type: 'gltf', name: 'christmasTreeVisualModel' },
                     // { path: 'christmas/christmasTreePhysical.glb', type: 'gltf', name: 'christmasTreePhysicalModel' },

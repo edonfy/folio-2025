@@ -77,7 +77,7 @@ export class Lighting
         this.lightBounceEdgeLow = uniform(float(-1))
         this.lightBounceEdgeHigh = uniform(float(1))
         this.lightBounceDistance = uniform(float(1.5))
-        this.lightBounceMultiplier = uniform(float(0.5))
+        this.lightBounceMultiplier = uniform(float(1))
 
         this.shadowColor = uniform(this.game.cycles.day.values.properties.shadowColor.value)
         this.coreShadowEdgeLow = uniform(float(-0.25))

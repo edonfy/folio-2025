@@ -12,6 +12,7 @@ import { InstancedGroup } from '../InstancedGroup.js'
 import { Trees } from './Trees.js'
 import Bushes from './Bushes.js'
 import { WaterSurface } from './WaterSurface.js'
+import { Scenery } from './Scenery.js'
 
 export class World
 {
@@ -20,6 +21,7 @@ export class World
         this.game = Game.getInstance()
 
         this.floor = new Floor()
+        this.secnery = new Scenery()
         this.waterSurface = new WaterSurface()
         this.grass = new Grass()
         this.bushes = new Bushes()
