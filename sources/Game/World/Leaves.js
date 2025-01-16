@@ -150,6 +150,10 @@ export class Leaves
                 0,
                 hash(instanceIndex.add(1)).sub(0.5).mul(this.size)
             ))
+
+            const noiseUv = position.xz.mul(0.02)
+            const noise = texture(this.game.noises.texture, noiseUv).r
+            position.xz.addAssign(noise.mul(15))
         })()
         const initCompute = init.compute(this.count)
 
