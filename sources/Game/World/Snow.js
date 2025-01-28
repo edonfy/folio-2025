@@ -352,7 +352,6 @@ export class Snow
         {
             this.debugPanel.addBinding(this.material, 'wireframe')
             this.game.debug.addThreeColorBinding(this.debugPanel, this.color.value, 'color')
-            this.debugPanel.addBinding(this.elevation, 'value', { label: 'elevation', min: -1, max: 1, step: 0.001 })
             this.debugPanel.addBlade({ view: 'separator' })
             this.debugPanel.addBinding(this.fadeEdgeHigh, 'value', { label: 'fadeEdgeHigh', min: - 2, max: 2, step: 0.001 })
             this.debugPanel.addBinding(this.fadeEdgeLow, 'value', { label: 'fadeEdgeLow', min: - 2, max: 2, step: 0.001 })

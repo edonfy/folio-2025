@@ -1,5 +1,6 @@
 import { vec2, Fn, texture, uniform } from 'three/tsl'
 import { Game } from './Game.js'
+import { remapClamp } from './utilities/maths.js'
 
 
 export class Wind
@@ -48,7 +49,6 @@ export class Wind
 
             this.debugPanel.addBinding(this.positionFrequency, 'value', { label: 'positionFrequency', min: 0, max: 1, step: 0.001 })
             this.debugPanel.addBinding(this, 'timeFrequency', { min: 0, max: 1, step: 0.001 })
-            this.debugPanel.addBinding(this.strength, 'value', { label: 'strength', min: 0, max: 2, step: 0.001 })
             this.debugPanel
                 .addBinding(this, 'angle', { min: - Math.PI, max: Math.PI, step: 0.001 })
                 .on('change', tweak => { this.direction.value.set(Math.sin(tweak.value), Math.cos(tweak.value),) })
@@ -57,6 +57,9 @@ export class Wind
 
     update()
     {
-        this.localTime.value += this.game.ticker.deltaScaled * this.timeFrequency
+        // Apply weather
+        const wind = remapClamp(this.game.weather.wind.value, 0, 1, 0.2, 1)
+        this.strength.value = wind
+        this.localTime.value += this.game.ticker.deltaScaled * this.timeFrequency * wind * 2
     }
 }

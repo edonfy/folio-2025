@@ -3,6 +3,7 @@ import { Game } from '../Game.js'
 import { attribute, cameraNormalMatrix, cameraPosition, cameraProjectionMatrix, cameraViewMatrix, color, cross, float, floor, Fn, If, modelNormalMatrix, modelViewMatrix, modelWorldMatrix, mul, normalLocal, normalWorld, positionGeometry, positionLocal, positionWorld, uniform, vec2, vec3, vec4, vertexIndex, viewport } from 'three/tsl'
 import gsap from 'gsap'
 import { WindLineGeometry } from '../Geometries/WindLineGeometry.js'
+import { remapClamp } from '../utilities/maths.js'
 
 class WindLine
 {
@@ -126,6 +127,9 @@ export class WindLines
 
         if(!windLine)
             return
+
+        // Apply weather
+        this.duration = remapClamp(this.game.weather.wind.value, 0, 1, 8, 2)
 
         // Setup
         windLine.mesh.visible = true

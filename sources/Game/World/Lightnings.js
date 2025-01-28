@@ -10,8 +10,6 @@ export class Lightnings
     {
         this.game = Game.getInstance()
 
-        this.nightChances = 0.25
-        this.hitChances = 0
         this.frequency = 2
 
         // Debug
@@ -22,8 +20,6 @@ export class Lightnings
                 expanded: false,
             })
 
-            this.debugPanel.addBinding(this, 'nightChances', { min: 0, max: 1, step: 0.001 })
-            this.hitChancesTweak = this.debugPanel.addBinding(this, 'hitChances', { min: 0, max: 1, step: 0.001 })
             this.debugPanel.addBinding(this, 'frequency', { min: 0.1, max: 10, step: 0.1 })
 
             this.game.debug.addButtons(
@@ -367,41 +363,13 @@ export class Lightnings
         })
     }
 
-    start()
-    {
-        this.hitChances = Math.random()
-
-        if(this.hitChancesTweak)
-            this.hitChancesTweak.refresh()
-    }
-
-    stop()
-    {
-        this.hitChances = 0
-
-        if(this.hitChancesTweak)
-            this.hitChancesTweak.refresh()
-    }
-
     setInterval()
     {
-        this.game.dayCycles.addIntervalEvent('lightning', 0.4, 0.6)
-        this.game.dayCycles.events.on('lightning', (atNight) =>
-        {
-            if(atNight)
-            {
-                if(Math.random() < this.nightChances) // Chances having ligtnings night
-                    this.start()
-            }
-            else
-            {
-                this.stop()
-            }
-        })
-
         const tryCreate = () =>
         {
-            if(Math.random() < this.hitChances)
+            const hitChances = Math.max(0, this.game.weather.clouds.value) * Math.max(0, this.game.weather.electricField.value) * this.game.weather.humidity.value
+
+            if(Math.random() < hitChances)
                 this.createRandom()
 
             gsap.delayedCall(1 / this.frequency, tryCreate)

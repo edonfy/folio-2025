@@ -142,17 +142,14 @@ export class WaterSurface
         if(this.game.debug.active)
         {
             this.debugPanel.addBlade({ view: 'separator' })
-            this.debugPanel.addBinding(this.ripplesRatio, 'value', { label: 'ripplesRatio', min: 0, max: 1, step: 0.01 })
             this.debugPanel.addBinding(ripplesSlopeFrequency, 'value', { label: 'ripplesSlopeFrequency', min: 0, max: 50, step: 0.01 })
             this.debugPanel.addBinding(ripplesNoiseFrequency, 'value', { label: 'ripplesNoiseFrequency', min: 0, max: 1, step: 0.01 })
-
             this.debugPanel.addBinding(ripplesNoiseOffset, 'value', { label: 'ripplesNoiseOffset', min: 0, max: 1, step: 0.001 })
+
             this.debugPanel.addBlade({ view: 'separator' })
-            this.debugPanel.addBinding(this.iceRatio, 'value', { label: 'iceRatio', min: 0, max: 1, step: 0.01 })
             this.debugPanel.addBinding(iceNoiseFrequency, 'value', { label: 'iceNoiseFrequency', min: 0, max: 1, step: 0.01 })
 
             this.debugPanel.addBlade({ view: 'separator' })
-            this.debugPanel.addBinding(this.splashesRatio, 'value', { label: 'splashesRatio', min: 0, max: 1, step: 0.01 })
             this.debugPanel.addBinding(splashesNoiseFrequency, 'value', { label: 'splashesNoiseFrequency', min: 0, max: 1, step: 0.01 })
             this.debugPanel.addBinding(splashesTimeFrequency, 'value', { label: 'splashesTimeFrequency', min: 0, max: 100, step: 0.1 })
             this.debugPanel.addBinding(splashesThickness, 'value', { label: 'splashesThickness', min: 0, max: 1, step: 0.01 })
@@ -211,7 +208,7 @@ export class WaterSurface
         this.ripplesRatio.value = remapClamp(this.game.weather.temperature.value, 0, -3, 1, 0)
         this.iceRatio.value = remapClamp(this.game.weather.temperature.value, 0, -5, 0, 1)
         this.splashesRatio.value = this.game.weather.rain.value
-        this.timeFrequency = remap(Math.abs(this.game.weather.wind.value), 0, 1, 0.01, 0.1)
+        this.timeFrequency = remap(this.game.weather.wind.value, 0, 1, 0.01, 0.1)
 
         this.localTime.value += this.game.ticker.deltaScaled * this.timeFrequency
 

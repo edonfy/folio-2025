@@ -87,13 +87,12 @@ export class Weather
         // Wind
         this.addProperty(
             'wind',
-            -1,
+            0,
             1,
             () =>
             {
                 const frequency = 1
-                const amplitude = 1
-                const variation = this.noise(this.game.dayCycles.absoluteProgress * frequency) * amplitude
+                const variation = this.noise(this.game.dayCycles.absoluteProgress * frequency) * 0.5 + 0.5
                 return variation
             }
         )

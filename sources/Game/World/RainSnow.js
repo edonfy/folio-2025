@@ -132,12 +132,10 @@ export class RainSnow
         // Debug
         if(this.game.debug.active)
         {
-            this.debugPanel.addBinding(this.visibleRatio, 'value', { label: 'visibleRatio', min: 0, max:1, step: 0.001 })
             this.debugPanel.addBinding(this.scale, 'value', { label: 'scale', min: 0, max: 0.1, step: 0.001 })
             this.debugPanel.addBinding(this.windFrequency, 'value', { label: 'windFrequency', min: 0, max: 0.02, step: 0.00001 })
             this.debugPanel.addBinding(this.windMultiplier, 'value', { label: 'windMultiplier', min: 0, max: 0.02, step: 0.00001 })
             this.debugPanel.addBinding(this.defaultDamping, 'value', { label: 'defaultDamping', min: 0, max: 0.05, step: 0.00001 })
-            this.debugPanel.addBinding(this.weight, 'value', { label: 'weight', min: 0, max: 1, step: 0.0001 })
             this.debugPanel.addBinding(this.gravity, 'value', { label: 'gravity', min: 0, max: 0.1, step: 0.00001 })
         }
     }
@@ -155,7 +153,6 @@ export class RainSnow
         // Apply weather
         this.visibleRatio.value = this.game.weather.rain.value
         this.weight.value = remapClamp(this.game.weather.temperature.value, 5, -5, 1, 0.1)
-        // TODO: wind
 
         this.mesh.visible = this.visibleRatio.value > 0.00001
         

@@ -46,6 +46,7 @@ export class Cycles
         {
             this.update()
         })
+        this.update(true)
     }
 
     getKeyframesDescriptions()
@@ -119,7 +120,7 @@ export class Cycles
         return keyframes
     }
 
-    update()
+    update(firstFrame = false)
     {
         // New absolute progress
         let newAbsoluteProgress = 0
@@ -141,7 +142,13 @@ export class Cycles
         {
             if(newProgress >= punctualEvent.progress && this.progress < punctualEvent.progress)
             {
-                this.events.trigger(punctualEvent.name)
+                if(firstFrame)
+                    requestAnimationFrame(() =>
+                    {
+                        this.events.trigger(punctualEvent.name)
+                    })
+                else
+                    this.events.trigger(punctualEvent.name)
             }
         }
 
@@ -153,12 +160,24 @@ export class Cycles
             if(inInterval && !intervalEvent.inInverval)
             {
                 intervalEvent.inInverval = true
-                this.events.trigger(intervalEvent.name, [ intervalEvent.inInverval ])
+                if(firstFrame)
+                    requestAnimationFrame(() =>
+                    {
+                        this.events.trigger(intervalEvent.name, [ intervalEvent.inInverval ])
+                    })
+                else
+                    this.events.trigger(intervalEvent.name, [ intervalEvent.inInverval ])
             }
             if(!inInterval && intervalEvent.inInverval)
             {
                 intervalEvent.inInverval = false
-                this.events.trigger(intervalEvent.name, [ intervalEvent.inInverval ])
+                if(firstFrame)
+                    requestAnimationFrame(() =>
+                    {
+                        this.events.trigger(intervalEvent.name, [ intervalEvent.inInverval ])
+                    })
+                else
+                    this.events.trigger(intervalEvent.name, [ intervalEvent.inInverval ])
             }
         }
 

@@ -1,6 +1,7 @@
 import * as THREE from 'three/webgpu'
 import { Game } from '../Game.js'
 import { float, Fn, hash, instancedArray, instanceIndex, materialNormal, max, mod, modelViewMatrix, positionGeometry, rotateUV, sin, smoothstep, step, storage, texture, uniform, vec2, vec3, vec4 } from 'three/tsl'
+import { remap } from '../utilities/maths.js'
 
 export class Leaves
 {
@@ -8,7 +9,11 @@ export class Leaves
     {
         this.game = Game.getInstance()
 
-        this.count = Math.pow(2, 13)
+        if(this.game.yearCycles.properties.leaves.value < 0.25)
+            return
+
+        const power = Math.round(remap(this.game.yearCycles.properties.leaves.value, 0, 1, 10, 13))
+        this.count = Math.pow(2, power)
 
         // Debug
         if(this.game.debug.active)
