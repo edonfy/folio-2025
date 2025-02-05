@@ -233,11 +233,11 @@ export class Snow
         this.fadeEdgeHigh = uniform(0.5)
         this.fadeEdgeLow = uniform(0.022)
         this.normalNeighbourShift = uniform(0.2)
-        this.twinkleProgress = uniform(0)
-        this.twinklePositionFrequency = uniform(20)
-        this.twinkleVariationFrequency = uniform(0.0001)
-        this.twinkleScarcity = uniform(0.0004)
-        this.twinkleStrength = uniform(3)
+        this.glittersProgress = uniform(0)
+        this.glittersPositionFrequency = uniform(20)
+        this.glittersVariationFrequency = uniform(0.0001)
+        this.glittersScarcity = uniform(0.0004)
+        this.glittersStrength = uniform(3)
 
         const deltaY = varying(float())
         const worldUv = varying(vec2())
@@ -326,20 +326,20 @@ export class Snow
             const alpha = deltaY.smoothstep(this.fadeEdgeLow, this.fadeEdgeHigh)
 
             // Twinkle
-            const twinkleUv = worldUv.mul(this.twinklePositionFrequency)
-            const twinkleUvLoop = twinkleUv.fract()
+            const glittersUv = worldUv.mul(this.glittersPositionFrequency)
+            const glittersUvLoop = glittersUv.fract()
 
             const noiseSubdivisions = 128
-            const noiseUv = worldUv.div(noiseSubdivisions).mul(this.twinklePositionFrequency)
-            const twinkleRandom1 = texture(this.game.noises.others, noiseUv.mul(noiseSubdivisions).floor().div(noiseSubdivisions)).g
-            const twinkleRandom2 = texture(this.game.noises.others, noiseUv.add(0.5).mul(noiseSubdivisions).floor().div(noiseSubdivisions)).g
-            const twinkleProgress = this.twinkleProgress.mul(this.twinkleVariationFrequency)
-            const twinkleStrength = twinkleProgress.sub(twinkleRandom1).fract().sub(0.5).abs().remapClamp(0, this.twinkleScarcity, 1, 0).toVar()
+            const noiseUv = worldUv.div(noiseSubdivisions).mul(this.glittersPositionFrequency)
+            const glittersRandom1 = texture(this.game.noises.others, noiseUv.mul(noiseSubdivisions).floor().div(noiseSubdivisions)).g
+            const glittersRandom2 = texture(this.game.noises.others, noiseUv.add(0.5).mul(noiseSubdivisions).floor().div(noiseSubdivisions)).g
+            const glittersProgress = this.glittersProgress.mul(this.glittersVariationFrequency)
+            const glittersStrength = glittersProgress.sub(glittersRandom1).fract().sub(0.5).abs().remapClamp(0, this.glittersScarcity, 1, 0).toVar()
 
-            const twinkleShape = twinkleUvLoop.sub(0.5).length().step(twinkleRandom2.mul(0.5))
-            twinkleStrength.mulAssign(twinkleShape.mul(this.twinkleStrength))
+            const glittersShape = glittersUvLoop.sub(0.5).length().step(glittersRandom2.mul(0.5))
+            glittersStrength.mulAssign(glittersShape.mul(this.glittersStrength))
 
-            return vec4(lightOutput.add(twinkleStrength), alpha)
+            return vec4(lightOutput.add(glittersStrength), alpha)
         })()
 
         // this.material.outputNode = vec4(debugColor, 1)
@@ -365,10 +365,10 @@ export class Snow
             this.debugPanel.addBinding(this.waterDropEdgeHigh, 'value', { label: 'waterDropEdgeHigh', min: 0, max: 1, step: 0.001 })
             this.debugPanel.addBinding(this.waterDropAmplitude, 'value', { label: 'waterDropAmplitude', min: 0, max: 5, step: 0.001 })
             this.debugPanel.addBlade({ view: 'separator' })
-            this.debugPanel.addBinding(this.twinklePositionFrequency, 'value', { label: 'twinklePositionFrequency', min: 1, max: 100, step: 1 })
-            this.debugPanel.addBinding(this.twinkleVariationFrequency, 'value', { label: 'twinkleVariationFrequency', min: 0, max: 0.001, step: 0.000001 })
-            this.debugPanel.addBinding(this.twinkleScarcity, 'value', { label: 'twinkleScarcity', min: 0, max: 0.01, step: 0.000001 })
-            this.debugPanel.addBinding(this.twinkleStrength, 'value', { label: 'twinkleStrength', min: 0, max: 10, step: 0.001 })
+            this.debugPanel.addBinding(this.glittersPositionFrequency, 'value', { label: 'glittersPositionFrequency', min: 1, max: 100, step: 1 })
+            this.debugPanel.addBinding(this.glittersVariationFrequency, 'value', { label: 'glittersVariationFrequency', min: 0, max: 0.001, step: 0.000001 })
+            this.debugPanel.addBinding(this.glittersScarcity, 'value', { label: 'glittersScarcity', min: 0, max: 0.01, step: 0.000001 })
+            this.debugPanel.addBinding(this.glittersStrength, 'value', { label: 'glittersStrength', min: 0, max: 10, step: 0.001 })
         }
     }
 
@@ -392,7 +392,7 @@ export class Snow
         this.elevation.value = clamp(this.elevation.value, -1, 0.5)
 
         // Optimal position
-        this.twinkleProgress.value = 1 + this.game.view.camera.position.x + this.game.view.camera.position.y + this.game.ticker.elapsedScaled * 0.4
+        this.glittersProgress.value = 1 + this.game.view.camera.position.x + this.game.view.camera.position.y + this.game.ticker.elapsedScaled * 0.4
         
         // Rounded position
         this.roundedPosition.value.x = Math.round(this.game.view.optimalArea.position.x / this.subdivisionSize) * this.subdivisionSize
