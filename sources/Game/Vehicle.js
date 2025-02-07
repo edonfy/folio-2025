@@ -553,17 +553,13 @@ export class Vehicle
 
         this.trails.left = this.trails.instance.create()
         this.trails.leftReference.getWorldPosition(this.trails.left.position)
-        
+    
+        this.trails.rightReference = new THREE.Object3D()
+        this.trails.rightReference.position.set(-1.28, 0.1, 0.55)
+        this.parts.chassis.add(this.trails.rightReference)
 
-        // this.leftTrail = new Trails()
-        // this.leftReference.getWorldPosition(this.leftTrail.position)
-
-        // this.rightReference = new THREE.Object3D()
-        // this.rightReference.position.set(-1.28, 0.1, 0.55)
-        // this.parts.chassis.add(this.rightReference)
-
-        // this.rightTrail = new Trails()
-        // this.rightReference.getWorldPosition(this.rightTrail.position)
+        this.trails.right = this.trails.instance.create()
+        this.trails.rightReference.getWorldPosition(this.trails.right.position)
     }
 
     updatePrePhysics()
@@ -729,11 +725,7 @@ export class Vehicle
         const trailAlpha = this.goingForward && this.game.inputs.keys.forward && this.game.inputs.keys.boost ? 1 : 0
         this.trails.leftReference.getWorldPosition(this.trails.left.position)
         this.trails.left.alpha = trailAlpha
-
-        // this.leftReference.getWorldPosition(this.leftTrail.position)
-        // this.leftTrail.alpha = this.goingForward && this.game.inputs.keys.forward && this.game.inputs.keys.boost ? 1 : 0
-
-        // this.rightReference.getWorldPosition(this.rightTrail.position)
-        // this.rightTrail.alpha = this.leftTrail.alpha
+        this.trails.rightReference.getWorldPosition(this.trails.right.position)
+        this.trails.right.alpha = trailAlpha
     }
 }
