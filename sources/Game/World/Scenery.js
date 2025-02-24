@@ -17,7 +17,7 @@ export class Scenery
             })
         }
 
-        this.setStoneMaterial()
+        // this.setStoneMaterial()
 
         this.setStatic()
         this.setDynamics()
@@ -55,10 +55,15 @@ export class Scenery
 
     setStatic()
     {
-        const visualModel = this.game.resources.sceneryStaticVisualModel
+        // Models
+        const visualModel = this.game.resources.sceneryStaticVisualModel.scene
+        const physicalModel = this.game.resources.sceneryStaticPhysicalModel.scene
         
-        this.game.materials.updateObject(visualModel.scene)
-        visualModel.scene.traverse(_child =>
+        // Materials
+        this.game.materials.updateObject(visualModel)
+
+        // Shadows
+        visualModel.traverse(_child =>
         {
             if(_child.isMesh)
             {
@@ -67,7 +72,19 @@ export class Scenery
             }
         })
 
-        this.game.scene.add(visualModel.scene)
+        // Entities
+        this.game.entities.addFromModels(
+            physicalModel,
+            visualModel,
+            {
+                type: 'fixed',
+                friction: 0,
+                // collidersOverload:
+                // {
+                //     category: 'floor'
+                // }
+            }
+        )
     }
 
     setDynamics()

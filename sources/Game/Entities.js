@@ -41,20 +41,9 @@ export class Entities
 
     addFromModels(_physicalModel, _visualModel, _physicalDescription = {})
     {
+        // Colliders
         const colliders = []
 
-        // Visual
-        _visualModel.traverse((_child) =>
-        {
-            if(_child.isMesh)
-            {
-                _child.castShadow = true
-                _child.receiveShadow = true
-            }
-        })
-        this.game.materials.updateObject(_visualModel)
-
-        // Colliders
         for(const physical of _physicalModel.children)
         {
             let collidersOverload = {}

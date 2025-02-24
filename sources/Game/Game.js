@@ -72,6 +72,7 @@ export class Game
                     { path: 'cherryTrees/cherryTreesVisual.glb', type: 'gltf', name: 'cherryTreesVisualModel' },
                     { path: 'cherryTrees/cherryTreesReferences.glb', type: 'gltf', name: 'cherryTreesReferencesModel' },
                     { path: 'scenery/sceneryStaticVisual.glb', type: 'gltf', name: 'sceneryStaticVisualModel' },
+                    { path: 'scenery/sceneryStaticPhysical.glb', type: 'gltf', name: 'sceneryStaticPhysicalModel' },
                     { path: 'poleLights/poleLights.glb', type: 'gltf', name: 'poleLightsModel' },
                     
                     // { path: 'christmas/christmasTreeVisual.glb', type: 'gltf', name: 'christmasTreeVisualModel' },
