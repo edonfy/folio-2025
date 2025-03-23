@@ -7,7 +7,7 @@ const skewedUv = Fn(([ uv, skew ]) =>
     return vec2(
         uv.x.add(uv.y.mul(skew.x)),
         uv.y.add(uv.x.mul(skew.y))
- )
+    )
 })
 
 const twistedCylinder = Fn(([ position, parabolStrength, parabolOffset, parabolAmplitude, time ]) =>
@@ -15,17 +15,17 @@ const twistedCylinder = Fn(([ position, parabolStrength, parabolOffset, parabolA
     const angle = atan(position.z, position.x).toVar()
     const elevation = position.y
 
-    // parabol
+    // Parabol
     const radius = parabolStrength.mul(position.y.sub(parabolOffset)).pow(2).add(parabolAmplitude).toVar()
 
-    // turbulences
+    // Turbulences
     radius.addAssign(sin(elevation.sub(time).mul(20).add(angle.mul(2))).mul(0.05))
 
     const twistedPosition = vec3(
         cos(angle).mul(radius),
         elevation,
         sin(angle).mul(radius)
- )
+    )
 
     return twistedPosition
 })
@@ -36,18 +36,37 @@ export class Tornado
     {
         this.game = Game.getInstance()
 
-        this.group = new THREE.Group()
-        this.group.position.x = 30
-        this.group.position.z = - 13
-        this.game.scene.add(this.group)
+        this.resolution = 20
+        this.position = new THREE.Vector3()
 
+        // Debug
+        if(this.game.debug.active)
+        {
+            this.debugPanel = this.game.debug.panel.addFolder({
+                title: '🌪️ Tornado',
+                expanded: true
+            })
+        }
+
+        this.setMesh()
+        this.setPath()
+
+        // Update
+        this.game.ticker.events.on('tick', () =>
+        {
+            this.update()
+        })
+    }
+
+    setMesh()
+    {
         // Uniforms
         const baseColor = uniform(color('#ff544d'))
         const emissive = uniform(8)
-        const timeScale = uniform(0.05)
-        const parabolStrength = uniform(1.4)
+        const timeScale = uniform(0.08)
+        const parabolStrength = uniform(1.7)
         const parabolOffset = uniform(0.4)
-        const parabolAmplitude = uniform(0.25)
+        const parabolAmplitude = uniform(0.27)
 
         // Geometry
         const geometry = new THREE.CylinderGeometry(1, 1, 1, 32, 16, true)
@@ -125,22 +144,62 @@ export class Tornado
         })()
 
         // Mesh
-        const mesh = new THREE.Mesh(geometry, material)
-        mesh.position.y = 0.5
-        mesh.scale.set(8, 8, 8)
-        this.group.add(mesh)
+        this.mesh = new THREE.Mesh(geometry, material)
+        this.mesh.position.x = 30
+        this.mesh.position.y = 0.5
+        this.mesh.position.z = -13
+        this.mesh.scale.set(8, 8, 8)
+        this.game.scene.add(this.mesh)
 
         // Debug
         if(this.game.debug.active)
         {
-            const debugPanel = this.game.debug.panel.addFolder({
-                title: '🌪️ Tornado',
-                expanded: true
-            })
-
-            debugPanel.addBinding(parabolStrength, 'value', { label: 'parabolStrength', min: 0, max: 2, step: 0.001 })
-            debugPanel.addBinding(parabolOffset, 'value', { label: 'parabolOffset', min: 0, max: 2, step: 0.001 })
-            debugPanel.addBinding(parabolAmplitude, 'value', { label: 'parabolAmplitude', min: 0, max: 2, step: 0.001 })
+            this.debugPanel.addBinding(parabolStrength, 'value', { label: 'parabolStrength', min: 0, max: 4, step: 0.001 })
+            this.debugPanel.addBinding(parabolOffset, 'value', { label: 'parabolOffset', min: 0, max: 4, step: 0.001 })
+            this.debugPanel.addBinding(parabolAmplitude, 'value', { label: 'parabolAmplitude', min: 0, max: 4, step: 0.001 })
         }
+    }
+
+    setPath()
+    {
+        const points = []
+
+        const referenceArray = this.game.resources.tornadoPathModel.scene.children[0].geometry.attributes.position.array
+        const count = referenceArray.length / 3
+
+        for(let i = 0; i < count; i++)
+        {
+            const i3 = i * 3
+            const point = new THREE.Vector3(
+                referenceArray[i3 + 0], 
+                0, 
+                referenceArray[i3 + 2]
+            )
+
+            points.push(point)
+        }
+        const curve = new THREE.CatmullRomCurve3(points, true)
+        this.path = curve.getSpacedPoints(this.resolution)
+    }
+
+    getPosition(progress)
+    {
+        const loopProgress = progress % 1
+        const prevIndex = Math.floor(loopProgress * this.resolution)
+        const nextIndex = (prevIndex + 1) % this.resolution
+        const mix = loopProgress * this.resolution - prevIndex
+        const prevPosition = this.path[prevIndex]
+        const nextPosition = this.path[nextIndex]
+        const position = new THREE.Vector3().lerpVectors(prevPosition, nextPosition, mix)
+
+        return position
+    }
+
+    update()
+    {
+        const progress = this.game.dayCycles.absoluteProgress * 2
+        const newPosition = this.getPosition(progress)
+        
+        this.mesh.position.copy(newPosition)
     }
 }

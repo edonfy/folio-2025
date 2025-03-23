@@ -83,6 +83,7 @@ export class Game
                     { path: 'poleLights/poleLightsPhysical.glb', type: 'gltf', name: 'poleLightsPhysicalModel' },
                     { path: 'whispers/whisperBeam.png', type: 'texture', name: 'whisperBeamTexture' },
                     { path: 'scenery/satanStar.png', type: 'texture', name: 'satanStarTexture' },
+                    { path: 'tornado/tornadoPath.glb', type: 'gltf', name: 'tornadoPathModel' },
                     
                     // { path: 'christmas/christmasTreeVisual.glb', type: 'gltf', name: 'christmasTreeVisualModel' },
                     // { path: 'christmas/christmasTreePhysical.glb', type: 'gltf', name: 'christmasTreePhysicalModel' },
