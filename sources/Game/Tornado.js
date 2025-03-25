@@ -10,7 +10,7 @@ export class Tornado
     {
         this.game = Game.getInstance()
 
-        this.strength = 1
+        this.strength = 0
         this.resolution = 20
         this.position = new THREE.Vector3()
 
@@ -102,14 +102,32 @@ export class Tornado
 
     start()
     {
+        // Move to position to prevent easing
         const progress = this.game.dayCycles.absoluteProgress * 2
         this.position.copy(this.getPosition(progress))
+
+        // Strength
         gsap.to(this, { strength: 1, duration: 20, ease: 'linear', overwrite: true })
+        
+        // Weather
+        this.game.weather.override.start(
+            {
+                humidity: 1,
+                electricField: 1,
+                clouds: 1,
+                wind: 1
+            },
+            20
+        )
     }
 
     stop()
     {
+        // Strength
         gsap.to(this, { strength: 0, duration: 20, ease: 'linear', overwrite: true })
+
+        // Weather
+        this.game.weather.override.end(20)
     }
 
     getPosition(progress)

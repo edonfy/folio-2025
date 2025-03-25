@@ -1,5 +1,6 @@
+import gsap from 'gsap'
 import { Game } from './Game.js'
-import { remapClamp } from './utilities/maths.js'
+import { lerp, remapClamp } from './utilities/maths.js'
 
 export class Weather
 {
@@ -17,6 +18,7 @@ export class Weather
         }
 
         this.properties = []
+        this.setOverride()
 
         // Temperature
         this.addProperty(
@@ -122,12 +124,13 @@ export class Weather
     addProperty(name, min, max, get)
     {
         const property = {}
+        property.name = name
         property.manual = false
         property.min = min
         property.max = max
 
         property.value = get()
-        property.manualValue = property.value
+        property.overrideValue = null
 
         // Debug
         property.binding = this.game.debug.addManualBinding(
@@ -137,7 +140,19 @@ export class Weather
             { label: name, min: property.min, max: property.max, step: 0.001 },
             () =>
             {
-                return get()
+                let value = get()
+                
+                if(this.override.strength > 0 && property.overrideValue !== null)
+                {
+                    value = lerp(value, property.overrideValue, this.override.strength)
+
+                    // if(name === 'humidity')
+                    // {
+                    //     console.log(value)
+                    // }
+                }
+                
+                return value
             }
         )
 
@@ -160,6 +175,30 @@ export class Weather
 
         this[name] = property
         this.properties.push(property)
+    }
+
+    setOverride()
+    {
+        this.override = {}
+        this.override.strength = 0
+        
+        this.override.start = (values = {}, duration = 5) =>
+        {
+            for(const property of this.properties)
+            {
+                if(typeof values[property.name] !== 'undefined')
+                    property.overrideValue = values[property.name]
+                else
+                    property.overrideValue = null
+            }
+
+            gsap.to(this.override, { strength: 1, duration, overwrite: true })
+        }
+
+        this.override.end = (duration = 5) =>
+        {
+            gsap.to(this.override, { strength: 0, duration, overwrite: true })
+        }
     }
 
     update()
