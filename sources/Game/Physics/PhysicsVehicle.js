@@ -30,9 +30,14 @@ export class PhysicsVehicle
         this.speed = 0
         this.absoluteSpeed = 0
         this.suspensionsHeights = {
-            low: 0.125 + 0.5,
-            mid: 0.45 + 0.5,
-            high: 1 + 0.5
+            low: 0.88,
+            mid: 1.23,
+            high: 1.63
+        }
+        this.suspensionsStiffness = {
+            low: 20,
+            mid: 30,
+            high: 40
         }
 
         // Debug
@@ -55,6 +60,10 @@ export class PhysicsVehicle
             this.debugPanel.addBinding(this.suspensionsHeights, 'low', { min: 0, max: 2, step: 0.01 })
             this.debugPanel.addBinding(this.suspensionsHeights, 'mid', { min: 0, max: 2, step: 0.01 })
             this.debugPanel.addBinding(this.suspensionsHeights, 'high', { min: 0, max: 2, step: 0.01 })
+
+            this.debugPanel.addBinding(this.suspensionsStiffness, 'low', { min: 0, max: 100, step: 0.1 })
+            this.debugPanel.addBinding(this.suspensionsStiffness, 'mid', { min: 0, max: 100, step: 0.1 })
+            this.debugPanel.addBinding(this.suspensionsStiffness, 'high', { min: 0, max: 100, step: 0.1 })
         }
 
         this.setChassis()
@@ -126,12 +135,12 @@ export class PhysicsVehicle
             directionCs: { x: 0, y: -1, z: 0 },
             axleCs: { x: 0, y: 0, z: 1 },
             frictionSlip: 0.9,
-            maxSuspensionForce: 100,
+            maxSuspensionForce: 150,
             maxSuspensionTravel: 2,
             sideFrictionStiffness: 3,
-            suspensionCompression: 20,
-            suspensionRelaxation: 1,
-            suspensionStiffness: 40,
+            suspensionCompression: 10,
+            suspensionRelaxation: 2.7,
+            suspensionStiffness: 25,
         }
 
         this.wheels.updateSettings = () =>
@@ -160,7 +169,6 @@ export class PhysicsVehicle
                 this.controller.setWheelSideFrictionStiffness(i, this.wheels.settings.sideFrictionStiffness)
                 this.controller.setWheelSuspensionCompression(i, this.wheels.settings.suspensionCompression)
                 this.controller.setWheelSuspensionRelaxation(i, this.wheels.settings.suspensionRelaxation)
-                this.controller.setWheelSuspensionStiffness(i, this.wheels.settings.suspensionStiffness)
 
                 i++
             }
@@ -392,6 +400,7 @@ export class PhysicsVehicle
             this.controller.setWheelBrake(i, brake)
             this.controller.setWheelEngineForce(i, engineForce)
             this.controller.setWheelSuspensionRestLength(i, this.suspensionsHeights[this.game.player.suspensions[i]])
+            this.controller.setWheelSuspensionStiffness(i, this.suspensionsStiffness[this.game.player.suspensions[i]])
         }
 
         // Tornado

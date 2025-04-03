@@ -28,7 +28,7 @@ export class PhysicsWireframe
         {
             this.debugPanel = this.game.physics.debugPanel.addFolder({
                 title: 'Wireframe',
-                expanded: false,
+                expanded: true,
             })
             
             this.debugPanel.addBinding(this, 'active', { label: 'debug' }).on('change', () =>
