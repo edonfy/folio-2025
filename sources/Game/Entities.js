@@ -1,5 +1,4 @@
 import { Game } from './Game.js'
-import { remapClamp } from './utilities/maths.js'
 
 export class Entities
 {
@@ -15,20 +14,68 @@ export class Entities
         }, 3)
     }
 
-    add(_physicalDescription = null, _visual = null)
+    add(_visualDescription = null, _physicalDescription = null)
     {
-        const entity = {
-            physical: _physicalDescription ? this.game.physics.getPhysical(_physicalDescription) : null,
-            visual: _visual
+        const entity = { visual: null, physical: null }
+
+        /**
+         * Visual
+         */
+        if(_visualDescription && _visualDescription.model)
+        {
+            entity.visual = _visualDescription.model
+
+            // Default parameters
+            const visualDescription = {
+                updateMaterials: true,
+                castShadow: true,
+                receiveShadow: true,
+                parent: this.game.scene,
+                ..._visualDescription
+            }
+            
+            // Update materials
+            if(visualDescription.updateMaterials)
+                this.game.materials.updateObject(visualDescription.model)
+
+            // Update shadows
+            if(visualDescription.castShadow || visualDescription.receiveShadow)
+            {
+                visualDescription.model.traverse(_child =>
+                {
+                    if(_child.isMesh)
+                    {
+                        if(visualDescription.castShadow)
+                            _child.castShadow = true
+
+                        if(visualDescription.receiveShadow)
+                            _child.receiveShadow = true
+                    }
+                })
+            }
+
+            // Add to scene
+            if(visualDescription.parent !== null)
+                visualDescription.parent.add(entity.visual)
         }
+
+        /**
+         * Physical
+         */
+        if(_physicalDescription)
+        {
+            entity.physical = this.game.physics.getPhysical(_physicalDescription)
+        }
+
+        /**
+         * Save
+         */
         this.key++
         this.list.set(this.key, entity)
 
-        if(_visual)
+        // If sleeping or fixed apply transform directly
+        if(entity.visual && entity.physical)
         {
-            this.game.scene.add(_visual)
-
-            // If sleeping or fixed apply transform directly
             if(_physicalDescription.sleeping || _physicalDescription.type === 'fixed')
             {
                 entity.visual.position.copy(entity.physical.body.translation())
@@ -39,48 +86,59 @@ export class Entities
         return entity
     }
 
-    addFromModels(_physicalModel, _visualModel, _physicalDescription = {})
+    addFromModel(_model, _visualDescription = null, _physicalDescription = null)
     {
-        // Colliders
+        // Extract physical from direct children and remove from scene
+        const physical = _model.children.find(_child => _child.name.startsWith('physical') )
+        if(physical)
+            physical.removeFromParent()
+    
+        // Create collider from physical children names and scales
         const colliders = []
 
-        for(const physical of _physicalModel.children)
+        if(physical)
         {
-            let collidersOverload = {}
-            if(typeof _physicalDescription.collidersOverload !== 'undefined')
-                collidersOverload = _physicalDescription.collidersOverload
+            for(const _physical of physical.children)
+            {
+                let collidersOverwrite = {}
+                if(typeof _physicalDescription.collidersOverwrite !== 'undefined')
+                    collidersOverwrite = _physicalDescription.collidersOverwrite
 
-            const collider = {
-                position: physical.position,
-                quaternion: physical.quaternion,
-                ...collidersOverload
-            }
-            if(physical.name.match(/^trimesh/i))
-            {
-                collider.shape = 'trimesh'
-                collider.parameters = [ physical.geometry.attributes.position.array, physical.geometry.index.array ]
-            }
-            else if(physical.name.match(/^hull/i))
-            {
-                collider.shape = 'hull'
-                collider.parameters = [ physical.geometry.attributes.position.array, physical.geometry.index.array ]
-            }
-            else if(physical.name.match(/^cub/i))
-            {
-                collider.shape = 'cuboid'
-                collider.parameters = [ physical.scale.x * 0.5, physical.scale.y * 0.5, physical.scale.z * 0.5 ]
-            }
+                const collider = {
+                    position: _physical.position,
+                    quaternion: _physical.quaternion,
+                    ...collidersOverwrite
+                }
+                if(_physical.name.match(/^trimesh/i))
+                {
+                    collider.shape = 'trimesh'
+                    collider.parameters = [ _physical.geometry.attributes.position.array, _physical.geometry.index.array ]
+                }
+                else if(_physical.name.match(/^hull/i))
+                {
+                    collider.shape = 'hull'
+                    collider.parameters = [ _physical.geometry.attributes.position.array, _physical.geometry.index.array ]
+                }
+                else if(_physical.name.match(/^cub/i))
+                {
+                    collider.shape = 'cuboid'
+                    collider.parameters = [ _physical.scale.x * 0.5, _physical.scale.y * 0.5, _physical.scale.z * 0.5 ]
+                }
 
-            colliders.push(collider)
+                colliders.push(collider)
+            }
         }
 
         // Add
         return this.add(
             {
+                ..._visualDescription,
+                model: _model
+            },
+            {
                 ..._physicalDescription,
                 colliders: colliders
-            },
-            _visualModel
+            }
         )
     }
 
@@ -88,7 +146,7 @@ export class Entities
     {
         this.list.forEach((_entity) =>
         {
-            if(_entity.visual)
+            if(_entity.visual && _entity.physical)
             {
                 if(!_entity.physical.body.isSleeping())
                 {

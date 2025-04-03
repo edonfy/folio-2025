@@ -96,12 +96,12 @@ export class World
         )
 
         this.game.entities.add(
+            visualCube,
             {
                 type: 'dynamic',
                 position: { x: 0, y: 4, z: 0 },
                 colliders: [ { shape: 'cuboid', parameters: [ 0.5, 0.5, 0.5 ] } ]
-            },
-            visualCube
+            }
         )
     }
 
@@ -125,6 +125,7 @@ export class World
 
         // Right (terrain)
         this.game.entities.add(
+            null,
             {
                 type: 'dynamic',
                 position: { x: 4, y: 2, z: -1.1 },

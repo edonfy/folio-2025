@@ -1,7 +1,5 @@
 import * as THREE from 'three/webgpu'
 import { Game } from '../Game.js'
-import { color, dot, Fn, max, mix, normalGeometry, smoothstep, uniform, vec3, vec4 } from 'three/tsl'
-import { normalWorld } from 'three/tsl'
 import { Flowers } from './Flowers.js'
 import { Bricks } from './Bricks.js'
 import { Trees } from './Trees.js'
@@ -34,10 +32,13 @@ export class Scenery
         this.cherryTrees = new Trees('Cherry Tree', this.game.resources.cherryTreesVisualModel.scene, this.game.resources.cherryTreesReferencesModel.scene.children, '#ff6da8')
         this.flowers = new Flowers()
         this.bricks = new Bricks()
-        this.poleLights = new PoleLights()
 
-        if(this.references.altar)
-            this.altar = new Altar(this.references.altar.position, this.references.altarCounter, this.references.altarSkullEyes)
+        if(this.references.altar && this.references.altarCounter && this.references.altarSkullEyes)
+            this.altar = new Altar(this.references.altar[0].position, this.references.altarCounter[0], this.references.altarSkullEyes)
+
+        if(this.references.poleLightGlass && this.references.poleLights)
+            this.poleLights = new PoleLights(this.references.poleLightGlass[0], this.references.poleLights)
+            
         // this.playground = new Playground()
         // this.christmas = new Christmas()
 
@@ -46,39 +47,34 @@ export class Scenery
     setStaticObjects()
     {
         // Models
-        const visualModel = this.game.resources.sceneryStaticVisualModel.scene
-        const physicalModel = this.game.resources.sceneryStaticPhysicalModel.scene
-
-        // Items
-        this.references = {}
-        this.references.altar = null
-        this.references.altarCounter = null
-        this.references.altarSkullEyes = []
+        const model = this.game.resources.sceneryStaticModel.scene
         
-        // Materials
-        this.game.materials.updateObject(visualModel)
+        // Extract references
+        this.references = {}
 
-        // Shadows
-        visualModel.traverse(_child =>
+        model.traverse(_child =>
         {
-            if(_child.isMesh)
-            {
-                _child.castShadow = true
-                _child.receiveShadow = true
-            }
+            const name = _child.name
 
-            if(_child.name === 'altar')
-                this.references.altar = _child
-            else if(_child.name === 'altarCounter')
-                this.references.altarCounter = _child
-            else if(_child.name.match(/^skullEyes/))
-                this.references.altarSkullEyes.push(_child)
+            // Anything starting with "reference"
+            const matches = name.match(/^reference([^0-9]+)([0-9]+)?$/)
+            if(matches)
+            {
+                // Extract name without "reference" and without number at the end
+                const referenceName = matches[1].charAt(0).toLowerCase() + matches[1].slice(1)
+                
+                // Create / save in array
+                if(typeof this.references[referenceName] === 'undefined')
+                    this.references[referenceName] = [_child]
+                else
+                    this.references[referenceName].push(_child)
+            }
         })
 
         // Entities
-        this.game.entities.addFromModels(
-            physicalModel,
-            visualModel,
+        this.game.entities.addFromModel(
+            model,
+            null,
             {
                 type: 'fixed',
                 friction: 0,
@@ -88,47 +84,28 @@ export class Scenery
 
     setDynamicsObjects()
     {
-        for(const child of this.game.resources.sceneryDynamicModel.scene.children)
+        const model = [...this.game.resources.sceneryDynamicModel.scene.children]
+        for(const child of model)
         {
-            const visual = child.children.find(_child => _child.name.startsWith('visual') )
-            const physical = child.children.find(_child => _child.name.startsWith('physical') )
-
-            if(!visual || !physical)
-            {
-                console.warn(`missing visual or physical for dynamic object ${child.name}`)
-            }
-            else
-            {
-                // Materials
-                this.game.materials.updateObject(visual)
-
-                // Shadows
-                visual.traverse(_child =>
+            // Entities
+            this.game.entities.addFromModel(
+                child,
                 {
-                    if(_child.isMesh)
-                    {
-                        _child.castShadow = true
-                        _child.receiveShadow = true
-                    }
-                })
 
-                // Entities
-                this.game.entities.addFromModels(
-                    physical,
-                    visual,
+                },
+                {
+                    type: 'dynamic',
+                    friction: child.userData.friction ?? 0.5,
+                    restitution: child.userData.restitution ?? 0.1,
+                    position: child.position,
+                    rotation: child.quaternion,
+                    sleeping: true,
+                    collidersOverwrite:
                     {
-                        type: 'dynamic',
-                        friction: child.userData.friction ?? 0.5,
-                        restitution: child.userData.restitution ?? 0.1,
-                        position: child.position,
-                        rotation: child.quaternion,
-                        collidersOverload:
-                        {
-                            mass: (child.userData.mass ?? 1) / physical.children.length
-                        }
+                        mass: child.userData.mass ?? 1
                     }
-                )
-            }
+                }
+            )
         }
     }
 }

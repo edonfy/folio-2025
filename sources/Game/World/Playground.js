@@ -12,7 +12,7 @@ export class Playground
             {
                 type: 'fixed',
                 friction: 0,
-                collidersOverload: { category: 'floor' }
+                collidersOverwrite: { category: 'floor' }
             }
         )
     }

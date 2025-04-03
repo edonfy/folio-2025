@@ -95,6 +95,7 @@ export class Trees
         for(const treeReference of this.references)
         {
             this.game.entities.add(
+                null,
                 {
                     type: 'fixed',
                     position: treeReference.position.add(new THREE.Vector3(0, 2.5, 0)),
@@ -102,8 +103,7 @@ export class Trees
                     friction: 0.7,
                     sleeping: true,
                     colliders: [ { shape: 'cylinder', parameters: [ 2.5, 0.15 ], category: 'object' } ]
-                },
-                null
+                }
             )
         }
     }

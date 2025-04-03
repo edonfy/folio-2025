@@ -14,6 +14,13 @@ export class Bricks
         {
             this.game.entities.add(
                 {
+                    model: reference,
+                    updateMaterials: false,
+                    castShadow: false,
+                    receiveShadow: false,
+                    parent: null,
+                },
+                {
                     type: 'dynamic',
                     position: reference.position,
                     rotation: reference.quaternion,
@@ -22,7 +29,6 @@ export class Bricks
                     colliders: [ { shape: 'cuboid', parameters: [ 0.75 * 0.75, 0.5 * 0.75, 1 * 0.75 ], mass: 0.1, category: 'object' } ],
                     waterGravityMultiplier: - 1
                 },
-                reference
             )
         }
 
@@ -31,13 +37,15 @@ export class Bricks
         model.position.set(0, 0, 0)
         model.rotation.set(0, 0, 0)
         model.frustumCulled = false
-        this.game.materials.updateObject(model)
 
-        model.traverse(child =>
-        {
-            child.castShadow = true
-            child.receiveShadow = true
-        })
+        this.game.entities.add(
+            {
+                model: model,
+                parent: null
+            },
+            null
+        )
+        // model.removeFromParent()
 
         // Instanced group
         this.testInstancedGroup = new InstancedGroup(references, model, true)

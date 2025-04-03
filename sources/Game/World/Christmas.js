@@ -40,6 +40,7 @@ export class Christmas
         for(const reference of references)
         {
             this.game.entities.add(
+                reference,
                 {
                     type: 'dynamic',
                     position: reference.position,
@@ -49,8 +50,7 @@ export class Christmas
                         { shape: 'cuboid', parameters: [ reference.scale.x, reference.scale.x, reference.scale.x ], position: { x: 0, y: 0, z: 0 } },
                     ],
                     canSleep: false,
-                },
-                reference
+                }
             )
         }
 

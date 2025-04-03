@@ -112,14 +112,17 @@ export class Field
             heights[index] = y
         }
 
-        this.game.entities.add({
-            type: 'fixed',
-            friction: 0.25,
-            restitution: 0,
-            colliders: [
-                { shape: 'heightfield', parameters: [ rowsCount - 1, rowsCount - 1, heights, { x: this.subdivision, y: 1, z: this.subdivision } ], category: 'floor' }
-            ]
-        })
+        this.game.entities.add(
+            null,
+            {
+                type: 'fixed',
+                friction: 0.25,
+                restitution: 0,
+                colliders: [
+                    { shape: 'heightfield', parameters: [ rowsCount - 1, rowsCount - 1, heights, { x: this.subdivision, y: 1, z: this.subdivision } ], category: 'floor' }
+                ]
+            }
+        )
     }
 
     update()
