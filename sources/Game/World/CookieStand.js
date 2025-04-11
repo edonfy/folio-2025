@@ -192,7 +192,7 @@ export class CookieStand
                     friction: 0.7,
                     sleeping: true,
                     enabled: onTable,
-                    colliders: [ { shape: 'cylinder', parameters: [ 0.35 / 2, 1.25 / 2 ], mass: this.cookies.mass, category: 'object' } ],
+                    colliders: [ { shape: 'cylinder', parameters: [ 0.55 / 2, 1.25 / 2 ], mass: this.cookies.mass, category: 'object' } ],
                     waterGravityMultiplier: - 1
                 },
             )
