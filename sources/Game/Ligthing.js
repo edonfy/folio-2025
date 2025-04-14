@@ -24,7 +24,7 @@ export class Lighting
         this.shadowAmplitude = 20
         this.near = 1
         this.depth = 60
-        this.shadowBias = -0.0002
+        this.shadowBias = -0.0006
         this.shadowNormalBias = 0
 
         if(this.game.debug.active)

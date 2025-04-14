@@ -14,6 +14,7 @@ import { Snow } from './Snow.js'
 import { Whispers } from './Whispers.js'
 import { VisualVehicle } from './VisualVehicle.js'
 import { Tornado } from './Tornado.js'
+import { Easter } from '../Easter/Easter.js'
 
 export class World
 {
@@ -22,18 +23,19 @@ export class World
         this.game = Game.getInstance()
 
         this.visualVehicle = new VisualVehicle()
-        this.field = new Field()
-        // this.grid = new Grid()
-        this.waterSurface = new WaterSurface()
-        this.grass = new Grass()
+        // this.field = new Field()
+        this.grid = new Grid()
+        // this.waterSurface = new WaterSurface()
+        // this.grass = new Grass()
         this.windLines = new WindLines()
-        this.leaves = new Leaves()
-        this.rainSnow = new Rain()
+        // this.leaves = new Leaves()
+        // this.rainSnow = new Rain()
         this.lightnings = new Lightnings()
-        this.snow = new Snow()
+        // this.snow = new Snow()
         this.scenery = new Scenery()
         this.whispers = new Whispers()
         this.tornado = new Tornado()
+        this.easter = new Easter()
 
         // this.setAxesHelper()
         // this.setCollisionGroupsTest()

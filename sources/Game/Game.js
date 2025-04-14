@@ -90,10 +90,9 @@ export class Game
                     [ 'cookieBannerTexture',            'cookieStand/cookieBanner.png',                 'texture', (resource) => { resource.colorSpace = THREE.SRGBColorSpace; resource.flipY = false } ],
                     [ 'interactiveAreasKeyIconTexture', 'interactiveAreas/interactiveAreasKeyIcon.png', 'texture', (resource) => { resource.flipY = true; resource.minFilter = THREE.NearestFilter; resource.magFilter = THREE.NearestFilter; resource.generateMipmaps = false } ],
                     [ 'respawnsModel',                  'respawns/respawns.glb',                        'gltf'    ],
+                    [ 'easterEggVisualModel',           'easter/easterEggVisual.glb',                   'gltf'    ],
+                    [ 'easterEggReferencesModel',       'easter/easterEggReferences.glb',               'gltf'    ],
                     
-                            
-                            
-                            
                     // [ 'christmasTreeVisualModel',     'christmas/christmasTreeVisual.glb',     'gltf' ],
                     // [ 'christmasTreePhysicalModel',   'christmas/christmasTreePhysical.glb',   'gltf' ],
                     // [ 'christmasGiftVisualModel',     'christmas/christmasGiftVisual.glb',     'gltf' ],

@@ -74,7 +74,7 @@ export class InteractiveAreas
     create(position, text = '', align = InteractiveAreas.ALIGN_LEFT, callback)
     {
         const newPosition = position.clone()
-        newPosition.y = 2.5
+        newPosition.y = 2.25
 
         /**
          * Group

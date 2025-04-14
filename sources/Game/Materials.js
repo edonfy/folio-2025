@@ -152,7 +152,7 @@ export class Materials
     createGradient(_name = 'material', _colorA = 'red', _colorB = 'blue', debugPanel = null)
     {
         const material = new THREE.MeshLambertNodeMaterial()
-        material.shadowSide = THREE.BackSide
+        // material.shadowSide = THREE.BackSide
         
         const colorA = uniform(new THREE.Color(_colorA))
         const colorB = uniform(new THREE.Color(_colorB))
@@ -265,7 +265,7 @@ export class Materials
         if(material.isMeshLambertNodeMaterial)
         {
             // Shadow
-            material.shadowSide = THREE.BackSide
+            // material.shadowSide = THREE.BackSide
             material.outputNode = this.game.lighting.lightOutputNodeBuilder(baseMaterial.color, normalWorld, this.game.lighting.addTotalShadowToMaterial(material))
         }
 

@@ -13,6 +13,7 @@ export class Modals
 
         this.setClose()
         this.setItems()
+        this.preopen()
         
         this.element.addEventListener('transitionend', () =>
         {
@@ -57,6 +58,7 @@ export class Modals
         {
             const name = element.dataset.name
             const item = {
+                name: name,
                 element: element,
                 mainFocus: element.querySelector('.js-main-focus'),
                 events: new Events()
@@ -141,5 +143,16 @@ export class Modals
         this.visible = false
         this.game.inputs.updateFilters([])
         this.current.events.trigger('close')
+    }
+
+    preopen()
+    {
+        this.items.forEach((item) => 
+        {
+            if(item.element.classList.contains('is-displayed'))
+            {
+                this.open(item.name)
+            }
+        })
     }
 }

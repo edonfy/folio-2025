@@ -39,6 +39,11 @@ html, body, .game, .modals
     -moz-osx-font-smoothing: grayscale;
 }
 
+html, body
+{
+    background: #231a21;
+}
+
 .fonts-loader
 {
     position: fixed;
@@ -220,8 +225,33 @@ html, body, .game, .modals
     width: 62px;
     cursor: default;
 }
-/* ffceca */
+
 .modals .content .input-group button svg *
 {
     stroke: #555555;
+}
+
+.modals .content .text a
+{
+    color: inherit;
+    text-decoration: underline;
+}
+
+.modals .content .text-close
+{
+    cursor: pointer;
+    border-color: #ffceca;
+    opacity: 0.8;
+}
+
+.modals .content .text-close
+{
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #ffffff;
+}
+
+.modals .content .text-close:hover
+{
+    opacity: 1;
 }

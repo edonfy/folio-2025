@@ -36,7 +36,66 @@
     </div>
     
     <div class="game">
-        <div class="js-modals modals">
+        <div class="js-modals modals is-displayed is-visible">
+
+            <!-- Easter -->
+            <div class="js-modal modal intro is-displayed" data-name="intro">
+                <div class="container">
+                    <div class="preview">
+                        <img class="background" src="ui/whispers/preview.png">
+                    </div>
+                    <div class="content">
+                        <button class="js-close close js-main-focus">
+                            <img src="ui/close.svg">
+                        </button>
+                        <div class="title">Easter egg hunt! <span class="text-faded">(alpha)</span></div>
+                        <p class="text">Eggs have been scattered around the world.</p>
+                        <p class="text">Find them all the reveal a 40% discount code for <a href="https://threejs-journey.com/" rel="noopener noreferrer">Three.js Journey</a>!</p>
+                        <p class="text">This is an <strong>alpha</strong> version of my portfolio:</p>
+                        <p class="text text-small text-faded">
+                            - Most of the features have been removed<br />
+                            - Press T to write whispers (visible by everyone)<br />
+                            - Only accessible during the event<br />
+                            - Desktop only<br />
+                            - Discover the development process on <a href="https://www.youtube.com/watch?v=9dhjws3Nops" rel="noopener noreferrer">Youtube</a>
+                        </p>
+                        <p class="text">
+                            <button class="js-close text-close">
+                                Start playing!
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="js-modal modal controls" data-name="controls">
+                <div class="container">
+                    <div class="preview">
+                        <img class="background" src="ui/whispers/preview.png">
+                    </div>
+                    <div class="content">
+                        <button class="js-close close js-main-focus">
+                            <img src="ui/close.svg">
+                        </button>
+                        <div class="title">Controls</div>
+                        <p class="text text-small">
+                            - <strong>WASD</strong> or <strong>ARROWS</strong> to move around<br />
+                            - <strong>SHIFT</strong> to boost<br />
+                            - <strong>B</strong> to brake<br />
+                            - <strong>SPACE</strong> to jump<br />
+                            - <strong>ENTER</strong> to interact<br />
+                            - <strong>T</strong> to post a whisper<br />
+                            - <strong>NUMPAD</strong> top activate hydraulics<br />
+                        </p>
+                        <p class="text text-faded">
+                            Future versions will have controller and touch support.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Whispers -->
             <div class="js-modal modal whispers" data-name="whispers">
                 <div class="container">
                     <div class="preview">
@@ -69,6 +128,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
