@@ -1,4 +1,3 @@
-/* @import url('./sound.css'); */
 /* @import url('./blackFriday.css'); */
 @import url('./tweakpane.css');
 
@@ -243,21 +242,39 @@ html
     text-decoration: underline;
 }
 
-.modals .content .text-close
+.modals .content .text-button
 {
+    vertical-align: top;
     cursor: pointer;
     border-color: #ffceca;
     opacity: 0.8;
-}
-
-.modals .content .text-close
-{
-    padding: 16px;
+    padding: 0 16px;
+    height: 60px;
     border-radius: 8px;
     border: 1px solid #ffffff;
 }
 
-.modals .content .text-close:hover
+.modals .content .text-button:hover
 {
     opacity: 1;
+}
+
+.modals .content .audio-toggle img.audio-off
+{
+    display: block;
+}
+
+.modals .content .audio-toggle img.audio-on
+{
+    display: none;
+}
+
+.modals .content .audio-toggle.is-active img.audio-on
+{
+    display: block;
+}
+
+.modals .content .audio-toggle.is-active img.audio-off
+{
+    display: none;
 }

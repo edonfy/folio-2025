@@ -67,7 +67,7 @@ export class Audio
     setMuteToggle()
     {
         this.muteToggle = {}
-        this.muteToggle.buttonElement = this.game.domElement.querySelector('.mute-toggle')
+        this.muteToggle.buttonElement = this.game.domElement.querySelector('.audio-toggle')
 
         this.muteToggle.active = true
 
@@ -105,7 +105,7 @@ export class Audio
         if(soundToggleLocal !== null && soundToggleLocal === '0')
             this.muteToggle.deactivate()
 
-        // this.muteToggle.buttonElement.addEventListener('click', this.muteToggle.toggle)
+        this.muteToggle.buttonElement.addEventListener('click', this.muteToggle.toggle)
     }
 
     update()
