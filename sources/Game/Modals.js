@@ -163,9 +163,19 @@ export class Modals
     {
         this.items.forEach((item) => 
         {
+            // Is preopened
             if(item.element.classList.contains('is-displayed'))
             {
-                this.open(item.name)
+                // Debug > Close preopened modal
+                if(this.game.debug.active)
+                {
+                    this.element.classList.remove('is-visible')
+                    item.element.classList.remove('is-displayed')
+                }
+                // Not debug > Cleanly opened modal
+                else
+                    this.open(item.name)
+                    
             }
         })
     }
