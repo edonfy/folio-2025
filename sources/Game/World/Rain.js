@@ -134,7 +134,7 @@ export class Rain
             { label: 'visibleRatio', min: 0, max: 1, step: 0.001 },
             () =>
             {
-                return this.game.weather.rain.value
+                return Math.pow(this.game.weather.rain.value, 3)
             }
         )
 

@@ -13,7 +13,7 @@ export class Leaves
         if(this.game.yearCycles.properties.leaves.value < 0.25)
             return
 
-        const power = Math.round(remap(this.game.yearCycles.properties.leaves.value, 0, 1, 10, 13))
+        const power = Math.round(remap((this.game.yearCycles.properties.leaves.value), 0.25, 1, 7, 12))
         this.count = Math.pow(2, power)
 
         // Debug

@@ -106,7 +106,7 @@ export class Weather
             1,
             () =>
             {
-                return remapClamp(this.humidity.value, 0.5, 1, 0, 1) * remapClamp(this.clouds.value, 0, 1, 0, 1)
+                return remapClamp(this.humidity.value, 0.65, 1, 0, 1) * remapClamp(this.clouds.value, 0, 1, 0, 1)
             }
         )
         
