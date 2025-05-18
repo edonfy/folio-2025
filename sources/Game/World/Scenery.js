@@ -61,6 +61,7 @@ export class Scenery
                 attributes: this.references.projectsAttributes[0],
                 pagination: this.references.projectsPagination[0],
                 distinctions: this.references.projectsDistinctions[0],
+                balls: this.references.projectsBalls
             })
 
         if(this.references.altar && this.references.altarCounter && this.references.altarSkullEyes)

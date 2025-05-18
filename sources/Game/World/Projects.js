@@ -45,6 +45,7 @@ export class Projects
         this.setTitle()
         this.setUrl()
         this.setDistinctions()
+        this.setPendulum()
 
         this.changeProject(0)
 
@@ -748,6 +749,18 @@ export class Projects
                 }
             })
         } 
+    }
+
+    setPendulum()
+    {
+        this.parameters.balls[0].rotation.reorder('YXZ')
+        const timeline0 = gsap.timeline({ yoyo: true, repeat: -1 })
+        timeline0.to(this.parameters.balls[0].rotation, { x: 0.75, ease: 'power2.out', delay: 0.75, duration: 0.75 })
+        
+        const timeline1 = gsap.timeline({ yoyo: true, repeat: -1, delay: 1.5 })
+        timeline1.to(this.parameters.balls[1].rotation, { x: -0.75, ease: 'power2.out', delay: 0.75, duration: 0.75 })
+        
+        console.log(this.parameters.balls)
     }
 
     open()
