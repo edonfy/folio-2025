@@ -4,7 +4,7 @@ import { InteractiveAreas } from '../InteractiveAreas.js'
 import gsap from 'gsap'
 import projects from '../../data/projects.js'
 import { TextWrapper } from '../TextWrapper.js'
-import { color, float, Fn, If, mix, normalWorld, step, texture, uniform, uv, vec4 } from 'three/tsl'
+import { add, color, float, Fn, If, mix, mul, normalWorld, positionGeometry, sin, step, texture, uniform, uv, vec4 } from 'three/tsl'
 
 export class Projects
 {
@@ -47,6 +47,7 @@ export class Projects
         this.setDistinctions()
         this.setPendulum()
         this.setBoard()
+        this.setFlame()
 
         this.changeProject(0)
 
@@ -785,6 +786,44 @@ export class Projects
         this.board.timeline.to(this.parameters.board.rotation, { x: 0.1, duration: 0.3 }, 0.45)
         this.board.timeline.to(this.parameters.board.rotation, { x: -0.1, duration: 0.3 }, 0.75)
         this.board.timeline.to(this.parameters.board.rotation, { x: 0, duration: 0.3 }, 1.05)
+    }
+
+    setFlame()
+    {
+        const mesh = this.parameters.flame
+        mesh.scale.setScalar(0)
+        mesh.visible = false
+
+        const baseMaterial = this.game.materials.getFromName('emissiveGradientWarm')
+        const material = new THREE.MeshBasicNodeMaterial({ transparent: true })
+        material.colorNode = baseMaterial.colorNode
+        material.positionNode = Fn(() =>
+        {
+            const newPosition = positionGeometry.toVar()
+
+            const wave = sin(this.game.ticker.elapsedScaledUniform.mul(0.3).add(uv().y.mul(3)))
+            const strength = uv().y.oneMinus().pow(2).mul(0.06)
+            newPosition.x.addAssign(wave.mul(strength))
+
+            return newPosition
+        })()
+        mesh.material = material
+
+        this.game.dayCycles.events.on('lights', (inInverval) =>
+        {
+            if(inInverval)
+            {
+                mesh.visible = true
+                gsap.to(mesh.scale, { x: 1, y: 1, z: 1, duration: 10, ease: 'power1.out', overwrite: true })
+            }
+            else
+            {
+                gsap.to(mesh.scale, { x: 0, y: 0, z: 0, duration: 10, ease: 'power1.in', overwrite: true, onComplete: () =>
+                {
+                    mesh.visible = false
+                } })
+            }
+        })
     }
 
     open()

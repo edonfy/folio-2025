@@ -54,6 +54,7 @@ export class Cycles
 
         this.setKeyframes()
         this.setOverride()
+        this.setIntervals()
 
         this.game.ticker.events.on('tick', () =>
         {
@@ -71,6 +72,11 @@ export class Cycles
                 { properties: { test: 0 }, stop: 1 },
             ]
         ]
+    }
+
+    getIntervalDescriptions()
+    {
+        return []
     }
 
     setKeyframes()
@@ -268,6 +274,16 @@ export class Cycles
     addPunctualEvent(name, progress)
     {
         this.punctualEvents.push({ name, progress })
+    }
+
+    setIntervals()
+    {
+        const descriptions = this.getIntervalDescriptions()
+
+        for(const description of descriptions)
+        {
+            this.addIntervalEvent(description.name, description.start, description.end)
+        }
     }
 
     addIntervalEvent(name, startProgress, endProgress)
