@@ -3,11 +3,11 @@ import { InteractiveAreas } from '../InteractiveAreas.js'
 
 export class Controls
 {
-    constructor(interactiveAreaPosition)
+    constructor(references)
     {
         this.game = Game.getInstance()
         
-        this.interactiveAreaPosition = interactiveAreaPosition
+        this.references = references
 
         this.setInteractiveArea()
     }
@@ -15,7 +15,7 @@ export class Controls
     setInteractiveArea()
     {
         this.game.interactiveAreas.create(
-            this.interactiveAreaPosition,
+            this.references.get('interactiveArea')[0].position,
             'Controls',
             InteractiveAreas.ALIGN_RIGHT,
             () =>

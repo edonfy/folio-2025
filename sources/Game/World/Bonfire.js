@@ -5,13 +5,13 @@ import { InteractiveAreas } from '../InteractiveAreas.js'
 
 export class Bonfire
 {
-    constructor(position, interactiveAreaPosition, hashes)
+    constructor(references)
     {
         this.game = Game.getInstance()
 
-        this.position = position
-        this.interactiveAreaPosition = interactiveAreaPosition
-        this.hashes = hashes
+        this.references = references
+
+        this.position = this.references.get('bonfire')[0].position
 
         this.setParticles()
         this.setInteractiveArea()
@@ -86,7 +86,7 @@ export class Bonfire
     setInteractiveArea()
     {
         this.game.interactiveAreas.create(
-            this.interactiveAreaPosition,
+            this.references.get('interactiveArea')[0].position,
             'Res(e)t',
             InteractiveAreas.ALIGN_RIGHT,
             () =>
@@ -125,7 +125,8 @@ export class Bonfire
             return lightOutput
         })()
 
-        this.hashes.material = material
+        const mesh = this.references.get('hashes')[0]
+        mesh.material = material
     }
 
     update()

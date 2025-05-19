@@ -28,6 +28,7 @@ export class Scenery
             })
         }
 
+        this.setReferences()
         this.setStaticObjects()
         this.setDynamicsObjects()
 
@@ -38,84 +39,81 @@ export class Scenery
         this.flowers = new Flowers()
         this.bricks = new Bricks()
 
-        if(
-            this.references.projectsCarpet &&
-            this.references.projectsInteractiveArea &&
-            this.references.projectsTitle &&
-            this.references.projectsUrl &&
-            this.references.projectsImages &&
-            this.references.projectsPrevious &&
-            this.references.projectsNext &&
-            this.references.projectsAttributes &&
-            this.references.projectsPagination &&
-            this.references.projectsBalls &&
-            this.references.projectsBoard &&
-            this.references.projectsFlame
-        )
-            this.projects = new Projects({
-                carpet: this.references.projectsCarpet[0],
-                interactiveAreaPosition: this.references.projectsInteractiveArea[0].position,
-                title: this.references.projectsTitle[0],
-                url: this.references.projectsUrl[0],
-                images: this.references.projectsImages[0],
-                previous: this.references.projectsPrevious[0],
-                next: this.references.projectsNext[0],
-                attributes: this.references.projectsAttributes[0],
-                pagination: this.references.projectsPagination[0],
-                distinctions: this.references.projectsDistinctions[0],
-                balls: this.references.projectsBalls,
-                board: this.references.projectsBoard[0],
-                flame: this.references.projectsFlame[0]
+        const projectsReferences = this.references.getStartingWith('projects')
+        if(projectsReferences.size)
+            this.projects = new Projects(projectsReferences)
+        
+        const altarReferences = this.references.getStartingWith('altar')
+        if(altarReferences.size)
+            this.altar = new Altar(altarReferences)
+
+        const poleLightsReferences = this.references.getStartingWith('poleLights')
+        if(poleLightsReferences.size)
+            this.poleLights = new PoleLights(poleLightsReferences)
+            
+        const cookieReferences = this.references.getStartingWith('cookie')
+        if(cookieReferences.size)
+            this.cookieStand = new CookieStand(cookieReferences)
+            
+        const bonfireReferences = this.references.getStartingWith('bonfire')
+        if(bonfireReferences.size)
+            this.poleLights = new Bonfire(bonfireReferences)
+            
+        const introReferences = this.references.getStartingWith('intro')
+        if(introReferences.size)
+            this.intro = new Intro(introReferences)
+
+        const controlsReferences = this.references.getStartingWith('controls')
+        if(controlsReferences.size)
+            this.controls = new Controls(controlsReferences)
+    }
+
+    setReferences()
+    {
+        this.references = {}
+
+        this.references.items = new Map()
+
+        this.references.parse = (object) =>
+        {
+            object.traverse(_child =>
+            {
+                const name = _child.name
+
+                // Anything starting with "reference"
+                const matches = name.match(/^ref(?:erence)?([^0-9]+)([0-9]+)?$/)
+                if(matches)
+                {
+                    // Extract name without "reference" and without number at the end
+                    const referenceName = matches[1].charAt(0).toLowerCase() + matches[1].slice(1)
+                    
+                    // Create / save in array
+                    if(!this.references.items.has(referenceName))
+                        this.references.items.set(referenceName, [_child])
+                    else
+                        this.references.items.get(referenceName).push(_child)
+                }
+            })
+        }
+
+        this.references.getStartingWith = (searched) =>
+        {
+            const items = new Map()
+
+            this.references.items.forEach((value, name) =>
+            {
+                if(name.startsWith(searched))
+                {
+                    // Strip name from searched value
+                    let stripName = name.replace(new RegExp(`^${searched}(.+)$`), '$1')
+                    stripName = stripName.charAt(0).toLowerCase() + stripName.slice(1)
+
+                    items.set(stripName, value)
+                }
             })
 
-        if(this.references.altar && this.references.altarCounter && this.references.altarSkullEyes)
-            this.altar = new Altar(
-                this.references.altar[0].position,
-                this.references.altarCounter[0],
-                this.references.altarSkullEyes
-            )
-
-        if(this.references.poleLightGlass && this.references.poleLights)
-            this.poleLights = new PoleLights(
-                this.references.poleLightGlass[0],
-                this.references.poleLights
-            )
-            
-        if(this.references.cookie && this.references.cookieBanner && this.references.cookieOvenHeat && this.references.cookieBlower && this.references.cookieChimney && this.references.cookieSpawner && this.references.cookieInteractiveArea && this.references.cookieTable && this.references.cookieCounterPanel && this.references.cookieCounterLabel)
-            this.cookieStand = new CookieStand(
-                this.references.cookie[0],
-                this.references.cookieBanner[0],
-                this.references.cookieOvenHeat[0],
-                this.references.cookieBlower[0],
-                this.references.cookieChimney[0].position,
-                this.references.cookieSpawner[0].position,
-                this.references.cookieInteractiveArea[0].position,
-                this.references.cookieTable[0].position,
-                this.references.cookieCounterPanel[0],
-                this.references.cookieCounterLabel[0],
-            )
-            
-        if(this.references.bonfire && this.references.bonfireInteractiveArea && this.references.bonfireHashes)
-            this.poleLights = new Bonfire(
-                this.references.bonfire[0].position,
-                this.references.bonfireInteractiveArea[0].position,
-                this.references.bonfireHashes[0]
-            )
-            
-        if(this.references.introInteractiveArea)
-            this.intro = new Intro(
-                this.references.introInteractiveArea[0].position,
-            )
-            
-            
-        if(this.references.controlsInteractiveArea)
-            this.controls = new Controls(
-                this.references.controlsInteractiveArea[0].position,
-            )
-            
-        // this.playground = new Playground()
-        // this.christmas = new Christmas()
-
+            return items
+        }
     }
 
     setStaticObjects()
@@ -123,27 +121,8 @@ export class Scenery
         // Models
         const model = this.game.resources.sceneryStaticModel.scene
         
-        // Extract references
-        this.references = {}
-
-        model.traverse(_child =>
-        {
-            const name = _child.name
-
-            // Anything starting with "reference"
-            const matches = name.match(/^reference([^0-9]+)([0-9]+)?$/)
-            if(matches)
-            {
-                // Extract name without "reference" and without number at the end
-                const referenceName = matches[1].charAt(0).toLowerCase() + matches[1].slice(1)
-                
-                // Create / save in array
-                if(typeof this.references[referenceName] === 'undefined')
-                    this.references[referenceName] = [_child]
-                else
-                    this.references[referenceName].push(_child)
-            }
-        })
+        // References
+        this.references.parse(model)
 
         // Entities
         this.game.entities.addFromModel(

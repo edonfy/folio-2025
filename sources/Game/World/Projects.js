@@ -15,10 +15,10 @@ export class Projects
     static STATE_CLOSED = 5
     static STATE_CLOSING = 6
 
-    constructor(parameters)
+    constructor(references)
     {
         this.game = Game.getInstance()
-        this.parameters = parameters
+        this.references = references
 
         this.state = Projects.STATE_CLOSED
         this.index = 0
@@ -39,6 +39,7 @@ export class Projects
 
         this.setInteractiveArea()
         this.setInputs()
+        this.setCursor()
         this.setCinematic()
         this.setShadeMix()
         this.setTexts()
@@ -66,7 +67,7 @@ export class Projects
     setInteractiveArea()
     {
         this.interactiveArea = this.game.interactiveAreas.create(
-            this.parameters.interactiveAreaPosition,
+            this.references.get('interactiveArea')[0].position,
             'Projects',
             InteractiveAreas.ALIGN_RIGHT,
             () =>
@@ -104,6 +105,16 @@ export class Projects
         })
     }
 
+    setCursor()
+    {
+        this.cursor = {}
+        this.cursor.intersect = this.game.cursor.addIntersects({
+            name: 'projects',
+            active: false,
+            shapes: []
+        })
+    }
+
     setCinematic()
     {
         this.cinematic = {}
@@ -116,8 +127,8 @@ export class Projects
 
         const applyPositionAndTarget = () =>
         {
-            this.cinematic.position.copy(this.parameters.interactiveAreaPosition).add(this.cinematic.positionOffset)
-            this.cinematic.target.copy(this.parameters.interactiveAreaPosition).add(this.cinematic.targetOffset)
+            this.cinematic.position.copy(this.references.get('interactiveArea')[0].position).add(this.cinematic.positionOffset)
+            this.cinematic.target.copy(this.references.get('interactiveArea')[0].position).add(this.cinematic.targetOffset)
         }
         applyPositionAndTarget()
 
@@ -185,13 +196,13 @@ export class Projects
         }
 
         // const settings = [
-        //     { name: 'title', mesh: this.parameters.title, fontSize: fontSizeMultiplier * 0.4, width: 4, height: 0.6 },
-        //     { name: 'url', mesh: this.parameters.url, fontSize: fontSizeMultiplier * 0.23, width: 4, height: 0.2 },
-        //     { name: 'previous', mesh: this.parameters.previous, fontSize: fontSizeMultiplier * 0.3, width: 1.25, height: 0.75 },
-        //     { name: 'next', mesh: this.parameters.next, fontSize: fontSizeMultiplier * 0.3, width: 1.25, height: 0.75 },
-        //     { name: 'role', mesh: this.parameters.role, fontSize: fontSizeMultiplier * 0.25, width: 1.4, height: 0.45 },
-        //     { name: 'at', mesh: this.parameters.at, fontSize: fontSizeMultiplier * 0.25, width: 1.4, height: 0.45 },
-        //     { name: 'with', mesh: this.parameters.with, fontSize: fontSizeMultiplier * 0.25, width: 1.4, height: 0.45 },
+        //     { name: 'title', mesh: this.references.get('title'), fontSize: fontSizeMultiplier * 0.4, width: 4, height: 0.6 },
+        //     { name: 'url', mesh: this.references.get('url'), fontSize: fontSizeMultiplier * 0.23, width: 4, height: 0.2 },
+        //     { name: 'previous', mesh: this.references.get('previous'), fontSize: fontSizeMultiplier * 0.3, width: 1.25, height: 0.75 },
+        //     { name: 'next', mesh: this.references.get('next'), fontSize: fontSizeMultiplier * 0.3, width: 1.25, height: 0.75 },
+        //     { name: 'role', mesh: this.references.get('role'), fontSize: fontSizeMultiplier * 0.25, width: 1.4, height: 0.45 },
+        //     { name: 'at', mesh: this.references.get('at'), fontSize: fontSizeMultiplier * 0.25, width: 1.4, height: 0.45 },
+        //     { name: 'with', mesh: this.references.get('with'), fontSize: fontSizeMultiplier * 0.25, width: 1.4, height: 0.45 },
         // ]
 
         // this.texts = {}
@@ -239,7 +250,7 @@ export class Projects
         this.images.direction = Projects.DIRECTION_NEXT
 
         // Mesh
-        this.images.mesh = this.parameters.images
+        this.images.mesh = this.references.get('images')[0]
         this.images.mesh.receiveShadow = true
 
         // Sources
@@ -429,7 +440,7 @@ export class Projects
     {
         this.pagination = {}
         this.pagination.inter = 0.2
-        this.pagination.group = this.parameters.pagination.children[0]
+        this.pagination.group = this.references.get('pagination')[0].children[0]
         this.pagination.items = []
 
         let i = 0
@@ -484,7 +495,7 @@ export class Projects
     setAttributes()
     {
         this.attributes = {}
-        this.attributes.group = this.parameters.attributes
+        this.attributes.group = this.references.get('attributes')[0]
         this.attributes.inter = 0.75
         this.attributes.names = ['role', 'at', 'with']
         this.attributes.items = {}
@@ -563,7 +574,7 @@ export class Projects
         this.adjacents.status = 'hidden'
 
         this.adjacents.previous = {}
-        this.adjacents.previous.group = this.parameters.previous
+        this.adjacents.previous.group = this.references.get('previous')[0]
         this.adjacents.previous.inner = this.adjacents.previous.group.children[0]
         this.adjacents.previous.textMesh = this.adjacents.previous.inner.children.find(_child => _child.name.startsWith('text'))
         this.adjacents.previous.textWrapper = new TextWrapper(
@@ -578,7 +589,7 @@ export class Projects
         this.texts.createMaterialOnMesh(this.adjacents.previous.textMesh, this.adjacents.previous.textWrapper.texture)
 
         this.adjacents.next = {}
-        this.adjacents.next.group = this.parameters.next
+        this.adjacents.next.group = this.references.get('next')[0]
         this.adjacents.next.inner = this.adjacents.next.group.children[0]
         this.adjacents.next.textMesh = this.adjacents.next.inner.children.find(_child => _child.name.startsWith('text'))
         this.adjacents.next.textWrapper = new TextWrapper(
@@ -619,7 +630,7 @@ export class Projects
     {
         this.title = {}
         this.title.status = 'hidden'
-        this.title.group = this.parameters.title
+        this.title.group = this.references.get('title')[0]
         this.title.inner = this.title.group.children[0]
         this.title.textMesh = this.title.inner.children.find(_child => _child.name.startsWith('text'))
         this.title.textWrapper = new TextWrapper(
@@ -658,7 +669,7 @@ export class Projects
     {
         this.url = {}
         this.url.status = 'hidden'
-        this.url.group = this.parameters.url
+        this.url.group = this.references.get('url')[0]
         this.url.inner = this.url.group.children[0]
         this.url.textMesh = this.url.inner.children.find(_child => _child.name.startsWith('text'))
         this.url.panel = this.url.inner.children.find(_child => _child.name.startsWith('panel'))
@@ -710,7 +721,7 @@ export class Projects
     {
         this.distinctions = {}
         this.distinctions.status = 'hidden'
-        this.distinctions.group = this.parameters.distinctions
+        this.distinctions.group = this.references.get('distinctions')[0]
         this.distinctions.names = ['awwwards', 'cssda', 'fwa']
         this.distinctions.items = {}
         this.distinctions.items.awwwards = this.distinctions.group.children.find(_child => _child.name.startsWith('awwwards'))
@@ -771,42 +782,44 @@ export class Projects
 
     setPendulum()
     {
-        this.parameters.balls[0].rotation.reorder('YXZ')
+        this.references.get('balls')[0].rotation.reorder('YXZ')
         const timeline0 = gsap.timeline({ yoyo: true, repeat: -1 })
-        timeline0.to(this.parameters.balls[0].rotation, { x: 0.75, ease: 'power2.out', delay: 0.75, duration: 0.75 })
+        timeline0.to(this.references.get('balls')[0].rotation, { x: 0.75, ease: 'power2.out', delay: 0.75, duration: 0.75 })
         
         const timeline1 = gsap.timeline({ yoyo: true, repeat: -1, delay: 1.5 })
-        timeline1.to(this.parameters.balls[1].rotation, { x: -0.75, ease: 'power2.out', delay: 0.75, duration: 0.75 })
+        timeline1.to(this.references.get('balls')[1].rotation, { x: -0.75, ease: 'power2.out', delay: 0.75, duration: 0.75 })
     }
 
     setBoard()
     {
         this.board = {}
         this.board.active = true
+        this.board.mesh = this.references.get('board')[0]
         
         this.board.timeline = gsap.timeline({
-            repeat: 1,
+            repeat: -1,
             repeatDelay: 5,
+            paused: true,
             onRepeat: () =>
             {
-                if(this.state === Projects.STATE_OPEN || !this.board.active)
+                if(this.state === Projects.STATE_CLOSED || this.state === Projects.STATE_CLOSING || !this.board.active)
                     this.board.timeline.pause()
             }
         })
 
-        this.board.timeline.to(this.parameters.board.position, { y: 0.25, ease: 'power2.out', duration: 0.7 }, 0)
-        this.board.timeline.to(this.parameters.board.position, { y: 0, ease: 'power2.in', duration: 0.7 }, 0.7)
+        this.board.timeline.to(this.board.mesh.position, { y: 0.25, ease: 'power2.out', duration: 0.7 }, 0 + 2)
+        this.board.timeline.to(this.board.mesh.position, { y: 0, ease: 'power2.in', duration: 0.7 }, 0.7 + 2)
 
-        this.board.timeline.to(this.parameters.board.rotation, { x: 0.1, duration: 0.15 }, 0)
-        this.board.timeline.to(this.parameters.board.rotation, { x: -0.1, duration: 0.3 }, 0.15)
-        this.board.timeline.to(this.parameters.board.rotation, { x: 0.1, duration: 0.3 }, 0.45)
-        this.board.timeline.to(this.parameters.board.rotation, { x: -0.1, duration: 0.3 }, 0.75)
-        this.board.timeline.to(this.parameters.board.rotation, { x: 0, duration: 0.3 }, 1.05)
+        this.board.timeline.to(this.board.mesh.rotation, { x: 0.1, duration: 0.15 }, 0 + 2)
+        this.board.timeline.to(this.board.mesh.rotation, { x: -0.1, duration: 0.3 }, 0.15 + 2)
+        this.board.timeline.to(this.board.mesh.rotation, { x: 0.1, duration: 0.3 }, 0.45 + 2)
+        this.board.timeline.to(this.board.mesh.rotation, { x: -0.1, duration: 0.3 }, 0.75 + 2)
+        this.board.timeline.to(this.board.mesh.rotation, { x: 0, duration: 0.3 }, 1.05 + 2)
     }
 
     setFlame()
     {
-        const mesh = this.parameters.flame
+        const mesh = this.references.get('flame')[0]
         mesh.scale.setScalar(0)
         mesh.visible = false
 

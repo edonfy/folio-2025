@@ -7,18 +7,7 @@ import { InteractiveAreas } from '../InteractiveAreas.js'
 
 export class CookieStand
 {
-    constructor(
-        cookie,
-        banner,
-        ovenHeat,
-        blower,
-        chimneyPosition,
-        spawnerPosition,
-        interactiveAreaPosition,
-        tablePosition,
-        counterPanel,
-        counterLabel
-    )
+    constructor(references)
     {
         this.game = Game.getInstance()
 
@@ -30,17 +19,9 @@ export class CookieStand
             })
         }
 
-        this.cookie = cookie
-        this.banner = banner
-        this.ovenHeat = ovenHeat
-        this.blower = blower
-        this.chimneyPosition = chimneyPosition
-        this.spawnerPosition = spawnerPosition
-        this.interactiveAreaPosition = interactiveAreaPosition
-        this.tablePosition = tablePosition
-        this.counterPanel = counterPanel
-        this.counterLabel = counterLabel
+        this.references = references
 
+        this.setBlower()
         this.setBanner()
         this.setParticles()
         this.setOvenHeat()
@@ -53,6 +34,11 @@ export class CookieStand
         {
             this.update()
         })
+    }
+
+    setBlower()
+    {
+        this.blower = this.references.get('blower')[0]
     }
 
     setBanner()
@@ -89,7 +75,8 @@ export class CookieStand
             return this.game.lighting.lightOutputNodeBuilder(baseColor, float(1), normalWorld, totalShadows, true, false)
         })()
 
-        this.banner.material = material
+        const mesh = this.references.get('banner')[0]
+        mesh.material = material
     }
 
     setParticles()
@@ -145,7 +132,7 @@ export class CookieStand
         const geometry = new THREE.PlaneGeometry(0.03, 0.03)
 
         const mesh = new THREE.Mesh(geometry, material)
-        mesh.position.copy(this.chimneyPosition)
+        mesh.position.copy(this.references.get('chimney')[0].position)
         mesh.count = count
         mesh.frustumCulled = true
         this.game.scene.add(mesh)
@@ -169,21 +156,24 @@ export class CookieStand
             return vec4(vec3(emissiveColor), strength)
         })()
 
+        this.ovenHeat = this.references.get('ovenHeat')[0]
         this.ovenHeat.material = material
         this.ovenHeat.castShadow = false
     }
 
     setCookies()
     {
-        this.cookie.removeFromParent()
+        const baseCookie = this.references.get('cookie')[0]
+        baseCookie.removeFromParent()
 
-        this.cookie.traverse((child) =>
+        baseCookie.traverse((child) =>
         {
             if(child.isMesh)
                 child.frustumCulled = false
         })
 
         this.cookies = {}
+        this.cookies.spawnerPosition = this.references.get('spawner')[0].position
         this.cookies.count = 20
         this.cookies.realCount = this.cookies.count + 2
         this.cookies.currentIndex = 0
@@ -201,12 +191,12 @@ export class CookieStand
 
             if(onTable)
             {
-                reference.position.copy(this.tablePosition)
+                reference.position.copy(this.references.get('table')[0].position)
                 reference.position.y += (i - this.cookies.count) * 0.25
             }
             else
             {
-                reference.position.copy(this.spawnerPosition)
+                reference.position.copy(this.cookies.spawnerPosition)
                 reference.position.y -= 4
             }
             references.push(reference)
@@ -235,7 +225,7 @@ export class CookieStand
             this.cookies.entities.push(entity)
         }
 
-        const instancedGroup = new InstancedGroup(references, this.cookie, true)
+        const instancedGroup = new InstancedGroup(references, baseCookie, true)
     }
 
     setActualCookies()
@@ -256,7 +246,7 @@ export class CookieStand
     setInteractiveArea()
     {
         this.game.interactiveAreas.create(
-            this.interactiveAreaPosition,
+            this.references.get('interactiveArea')[0].position,
             'Accept cookie',
             InteractiveAreas.ALIGN_RIGHT,
             () =>
@@ -270,7 +260,7 @@ export class CookieStand
     {
         this.counter = {}
         this.counter.value = 11
-        this.counter.panel = this.counterPanel
+        this.counter.panel = this.references.get('counterPanel')[0]
         this.counter.texture = null
         this.counter.initialised = false
 
@@ -331,8 +321,8 @@ export class CookieStand
 
             // Mesh
             const mesh = new THREE.Mesh(geometry, material)
-            mesh.position.copy(this.counterLabel.position)
-            mesh.quaternion.copy(this.counterLabel.quaternion)
+            mesh.position.copy(this.references.get('counterLabel')[0].position)
+            mesh.quaternion.copy(this.references.get('counterLabel')[0].quaternion)
             mesh.receiveShadow = true
             mesh.scale.y = 0.75
             mesh.scale.x = 0.75 * width / height
@@ -428,7 +418,7 @@ export class CookieStand
         // Cookies
         const entity = this.cookies.entities[this.cookies.currentIndex]
 
-        const spawnPosition = this.spawnerPosition.clone()
+        const spawnPosition = this.cookies.spawnerPosition.clone()
         spawnPosition.z += Math.random() - 0.5
         entity.physical.body.setTranslation(spawnPosition)
         entity.physical.body.setEnabled(true)

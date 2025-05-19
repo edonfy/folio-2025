@@ -5,7 +5,7 @@ import gsap from 'gsap'
 
 export class Altar
 {
-    constructor(position, counter, skullEyes)
+    constructor(references)
     {
         this.game = Game.getInstance()
 
@@ -17,10 +17,9 @@ export class Altar
             })
         }
 
+        this.references = references
         this.value = 0
-        this.position = position.clone()
-        this.counter = counter
-        this.skullEyes = skullEyes
+        this.position = this.references.get('altar')[0].position.clone()
 
         this.colorBottom = uniform(color('#ff544d'))
         this.emissiveBottom = uniform(8)
@@ -259,7 +258,7 @@ export class Altar
 
         // Mesh
         this.mesh = new THREE.Mesh(geometry, material)
-        this.counter.add(this.mesh)
+        this.references.get('counter')[0].add(this.mesh)
     }
 
     setArea()
@@ -314,6 +313,7 @@ export class Altar
 
     setSkullEyes()
     {
+        this.skullEyes = this.references.get('skullEyes')
         for(const skullEyes of this.skullEyes)
             skullEyes.visible = false
     }

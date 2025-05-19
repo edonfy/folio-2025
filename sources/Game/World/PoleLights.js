@@ -5,7 +5,7 @@ import gsap from 'gsap'
 
 export class PoleLights
 {
-    constructor(glass, references)
+    constructor(references)
     {
         this.game = Game.getInstance()
 
@@ -18,8 +18,8 @@ export class PoleLights
             })
         }
 
-        this.glass = glass
-        this.references = references
+        this.glass = references.get('glass')[0]
+        this.references = references.get('poleLights')
 
         this.setEmissives()
         this.setFireflies()

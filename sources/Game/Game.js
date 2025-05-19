@@ -36,6 +36,7 @@ import { InteractiveAreas } from './InteractiveAreas.js'
 import { Respawns } from './Respawns.js'
 import { Audio } from './Audio.js'
 import { CloseHandler } from './CloseHandler.js'
+import { Cursor } from './Cursor.js'
 
 export class Game
 {
@@ -127,6 +128,7 @@ export class Game
         this.server = new Server()
         this.ticker = new Ticker()
         this.inputs = new Inputs()
+        this.cursor = new Cursor()
         this.debug = new Debug()
         this.time = new Time()
         this.viewport = new Viewport(this.domElement)
