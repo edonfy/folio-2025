@@ -123,7 +123,7 @@ export class Projects
         {
             const debugPanel = this.debugPanel.addFolder({
                 title: 'cinematic',
-                expanded: true,
+                expanded: false,
             })
             debugPanel.addBinding(this.cinematic.positionOffset, 'x', { label: 'positionX', min: - 10, max: 10, step: 0.05 }).on('change', applyPositionAndTarget)
             debugPanel.addBinding(this.cinematic.positionOffset, 'y', { label: 'positionY', min: 0, max: 10, step: 0.05 }).on('change', applyPositionAndTarget)
@@ -147,6 +147,34 @@ export class Projects
         this.shadeMix.texts.min = 0.1
         this.shadeMix.texts.max = 0.3
         this.shadeMix.texts.uniform = uniform(this.shadeMix.texts.min)
+
+        // Debug
+        if(this.game.debug.active)
+        {
+            const debugPanel = this.debugPanel.addFolder({
+                title: 'Shader mix',
+                expanded: true,
+            })
+
+            const debugUpdate = () =>
+            {
+                if(this.state === Projects.STATE_OPEN || this.state === Projects.STATE_OPENING)
+                {
+                    this.shadeMix.images.uniform.value = this.shadeMix.images.max
+                    this.shadeMix.texts.uniform.value = this.shadeMix.texts.max
+                }
+                else
+                {
+                    this.shadeMix.images.uniform.value = this.shadeMix.images.min
+                    this.shadeMix.texts.uniform.value = this.shadeMix.texts.min
+                }
+            }
+            
+            debugPanel.addBinding(this.shadeMix.images, 'min', { label: 'imagesMin', min: 0, max: 1, step: 0.001 }).on('change', debugUpdate)
+            debugPanel.addBinding(this.shadeMix.images, 'max', { label: 'imagesMax', min: 0, max: 1, step: 0.001 }).on('change', debugUpdate)
+            debugPanel.addBinding(this.shadeMix.texts, 'min', { label: 'textsMin', min: 0, max: 1, step: 0.001 }).on('change', debugUpdate)
+            debugPanel.addBinding(this.shadeMix.texts, 'max', { label: 'textsMax', min: 0, max: 1, step: 0.001 }).on('change', debugUpdate)
+        }
     }
 
     setTexts()
@@ -266,12 +294,12 @@ export class Projects
 
         this.images.material.outputNode = Fn(() =>
         {
-            // Parallax
             const uvOld = uv().toVar()
             const uvNew = uv().toVar()
 
-            uvNew.x.addAssign(this.images.animationProgress.oneMinus().mul(-0.5).mul(this.images.animationDirection))
-            uvOld.x.addAssign(this.images.animationProgress.mul(0.5).mul(this.images.animationDirection))
+            // Parallax (add an offset according to progress)
+            uvNew.x.addAssign(this.images.animationProgress.oneMinus().mul(-0.25).mul(this.images.animationDirection))
+            uvOld.x.addAssign(this.images.animationProgress.mul(0.25).mul(this.images.animationDirection))
 
             // Textures
             const textureOldColor = texture(this.images.textureOld, uvOld).rgb
@@ -721,6 +749,7 @@ export class Projects
         
         // Intersect
         const intersectNext = this.references.get('intersectNextProject')[0]
+
         this.adjacents.next.intersect = this.game.cursor.addIntersects({
             active: false,
             shapes:
