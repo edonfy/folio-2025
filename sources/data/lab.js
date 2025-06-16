@@ -18,7 +18,7 @@ export default [
         titleSmall: [ 'Holographic', 'terrain' ],
         url: 'https://experiment-holographic-terrain.vercel.app',
         image: 'bonhomme-10-ans.webp',
-        imageMini: 'bonhomme0-ans-mini.webp'
+        imageMini: 'bonhomme-10-ans-mini.webp'
     },
     {
         title: 'Woodkid Volcano Robot',

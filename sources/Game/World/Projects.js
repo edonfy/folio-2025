@@ -30,6 +30,7 @@ export class Projects
         
         this.references = references
         this.state = Projects.STATE_CLOSED
+        this.data = projects
 
         this.setInteractiveArea()
         this.setInputs()
@@ -37,7 +38,7 @@ export class Projects
         this.setShadeMix()
         this.setTexts()
         this.setHover()
-        this.setProjects()
+        this.setNavigation()
         this.setImages()
         this.setPagination()
         this.setAttributes()
@@ -239,15 +240,14 @@ export class Projects
         this.hover.activeMaterial.outputNode = vec4(this.hover.baseColor.mul(1.5), float(1))
     }
 
-    setProjects()
+    setNavigation()
     {
-        this.projects = {}
-        this.projects.index = 0
-        this.projects.current = null
-        this.projects.next = null
-        this.projects.previous = null
-        this.projects.current = null
-        this.projects.items = projects
+        this.navigation = {}
+        this.navigation.index = 0
+        this.navigation.current = null
+        this.navigation.next = null
+        this.navigation.previous = null
+        this.navigation.current = null
     }
 
     setImages()
@@ -261,6 +261,7 @@ export class Projects
         // Mesh
         this.images.mesh = this.references.get('images')[0]
         this.images.mesh.receiveShadow = true
+        this.images.mesh.castShadow = false
 
         // Sources
         this.images.resources = new Map()
@@ -334,7 +335,7 @@ export class Projects
         this.images.loadEnded = (key) =>
         {
             // Current image => Reveal
-            if(this.projects.current.images[this.images.index] === key)
+            if(this.navigation.current.images[this.images.index] === key)
             {
                 this.images.textureNew.needsUpdate = true
                 gsap.to(this.images.loadProgress, { value: 1, duration: 1, overwrite: true })
@@ -346,7 +347,7 @@ export class Projects
         // Load sibling
         this.images.loadSibling = () =>
         {
-            let projectIndex = this.projects.index
+            let projectIndex = this.navigation.index
             let imageIndex = this.images.index
 
             if(this.images.direction === Projects.DIRECTION_PREVIOUS)
@@ -359,21 +360,21 @@ export class Projects
                 projectIndex -= 1
 
                 if(projectIndex < 0)
-                    projectIndex = this.projects.items.length - 1
+                    projectIndex = this.data.length - 1
 
-                imageIndex = this.projects.items[projectIndex].images.length - 1
+                imageIndex = this.data[projectIndex].images.length - 1
             }
-            else if(imageIndex > this.projects.current.images.length - 1)
+            else if(imageIndex > this.navigation.current.images.length - 1)
             {
                 projectIndex += 1
 
-                if(projectIndex > this.projects.items.length - 1)
+                if(projectIndex > this.data.length - 1)
                     projectIndex = 0
 
                 imageIndex = 0
             }
 
-            const key = this.projects.items[projectIndex].images[imageIndex]
+            const key = this.data[projectIndex].images[imageIndex]
             const resource = this.images.getResourceAndLoad(key)
         }
 
@@ -424,7 +425,7 @@ export class Projects
             this.images.direction = direction
 
             // Get resource
-            const key = this.projects.current.images[this.images.index]
+            const key = this.navigation.current.images[this.images.index]
             const resource = this.images.getResourceAndLoad(key)
 
             if(resource.loaded)
@@ -566,7 +567,7 @@ export class Projects
             let i = 0
             for(const item of this.pagination.items)
             {
-                if(i <= this.projects.current.images.length - 1)
+                if(i <= this.navigation.current.images.length - 1)
                 {
                     if(!item.visible)
                     {
@@ -594,7 +595,7 @@ export class Projects
                 i++
             }
 
-            const offset = - (this.projects.current.images.length - 1) * this.pagination.inter / 2
+            const offset = - (this.navigation.current.images.length - 1) * this.pagination.inter / 2
             gsap.to(this.pagination.group.position, { x: offset, duration: 0.5, ease: 'power1.inOut', overwrite: true, onComplete: () =>
             {
                 for(const item of this.pagination.items)
@@ -660,7 +661,7 @@ export class Projects
                 for(const name of this.attributes.names)
                 {
                     const item = this.attributes.items[name]
-                    const attribute = this.projects.current.attributes[name]
+                    const attribute = this.navigation.current.attributes[name]
 
                     if(attribute)
                     {
@@ -806,8 +807,8 @@ export class Projects
                 gsap.to(this.adjacents.previous.inner.rotation, { z: 0, duration: 1, delay: 0, ease: 'back.out(2)', overwrite: true })
                 gsap.to(this.adjacents.next.inner.rotation, { z: 0, duration: 1, delay: 0.4, ease: 'back.out(2)', overwrite: true })
 
-                this.adjacents.previous.textCanvas.updateText(this.projects.previous.titleSmall)
-                this.adjacents.next.textCanvas.updateText(this.projects.next.titleSmall)
+                this.adjacents.previous.textCanvas.updateText(this.navigation.previous.titleSmall)
+                this.adjacents.next.textCanvas.updateText(this.navigation.next.titleSmall)
             })
         }
     }
@@ -846,7 +847,7 @@ export class Projects
 
                 gsap.to(this.title.inner.rotation, { x: Math.PI * 2 * rotationDirection, duration: 1, delay: 0, ease: 'back.out(2)', overwrite: true })
 
-                this.title.textCanvas.updateText(this.projects.current.title)
+                this.title.textCanvas.updateText(this.navigation.current.title)
             } })
         }
     }
@@ -937,7 +938,7 @@ export class Projects
 
                 gsap.to(this.url.inner.rotation, { x: Math.PI * 2 * rotationDirection, duration: 1, delay: 0, ease: 'back.out(2)', overwrite: true })
 
-                this.url.textCanvas.updateText(this.projects.current.url.replace(/https?:\/\//, ''))
+                this.url.textCanvas.updateText(this.navigation.current.url.replace(/https?:\/\//, ''))
 
                 const ratio = this.url.textCanvas.getMeasure().width / this.texts.density
                 this.url.panel.scale.x = ratio + 0.2
@@ -948,9 +949,9 @@ export class Projects
         // Open
         this.url.open = () =>
         {
-            if(this.projects.current.url)
+            if(this.navigation.current.url)
             {
-                window.open(this.projects.current.url, '_blank')
+                window.open(this.navigation.current.url, '_blank')
             }
         }
     }
@@ -1001,8 +1002,8 @@ export class Projects
                 this.distinctions.status = 'visible'
 
                 let i = 0
-                const positions = this.distinctions.positions[this.projects.current.distinctions.length - 1]
-                for(const name of this.projects.current.distinctions)
+                const positions = this.distinctions.positions[this.navigation.current.distinctions.length - 1]
+                for(const name of this.navigation.current.distinctions)
                 {
                     const item = this.distinctions.items[name]
 
@@ -1299,14 +1300,14 @@ export class Projects
         if(this.state === Projects.STATE_CLOSED || this.state === Projects.STATE_CLOSING)
             return
 
-        this.changeProject(this.projects.index - 1, Projects.DIRECTION_PREVIOUS, firstImage)
+        this.changeProject(this.navigation.index - 1, Projects.DIRECTION_PREVIOUS, firstImage)
 
         this.blackBoard.active = false
     }
 
     next()
     {
-        if(this.images.index < this.projects.current.images.length - 1)
+        if(this.images.index < this.navigation.current.images.length - 1)
             this.nextImage()
         else
             this.nextProject()
@@ -1327,7 +1328,7 @@ export class Projects
         if(this.state === Projects.STATE_CLOSED || this.state === Projects.STATE_CLOSING)
             return
 
-        this.changeProject(this.projects.index + 1, Projects.DIRECTION_NEXT)
+        this.changeProject(this.navigation.index + 1, Projects.DIRECTION_NEXT)
 
         this.blackBoard.active = false
     }
@@ -1337,16 +1338,16 @@ export class Projects
         // Loop index
         let loopIndex = index
 
-        if(loopIndex > this.projects.items.length - 1)
+        if(loopIndex > this.data.length - 1)
             loopIndex = 0
         else if(loopIndex < 0)
-            loopIndex = this.projects.items.length - 1
+            loopIndex = this.data.length - 1
 
         // Save
-        this.projects.index = loopIndex
-        this.projects.current = this.projects.items[this.projects.index]
-        this.projects.previous = this.projects.items[(this.projects.index - 1) < 0 ? this.projects.items.length - 1 : this.projects.index - 1]
-        this.projects.next = this.projects.items[(this.projects.index + 1) % this.projects.items.length]
+        this.navigation.index = loopIndex
+        this.navigation.current = this.data[this.navigation.index]
+        this.navigation.previous = this.data[(this.navigation.index - 1) < 0 ? this.data.length - 1 : this.navigation.index - 1]
+        this.navigation.next = this.data[(this.navigation.index + 1) % this.data.length]
 
         // Update components
         this.attributes.update()
@@ -1360,7 +1361,7 @@ export class Projects
         if(firstImage)
             imageIndex = 0
         else
-            imageIndex = direction === Projects.DIRECTION_NEXT ? 0 : this.projects.current.images.length - 1
+            imageIndex = direction === Projects.DIRECTION_NEXT ? 0 : this.navigation.current.images.length - 1
 
         this.changeImage(imageIndex, direction)
     }

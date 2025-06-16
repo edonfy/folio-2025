@@ -24,4 +24,9 @@ function smoothstep(value, min, max)
     return x * x * (3 - 2 * x)
 }
 
-export { clamp, remap, remapClamp, lerp, smoothstep }
+function safeMod(n, m)
+{
+    return ((n % m) + m) % m
+}
+
+export { clamp, remap, remapClamp, lerp, smoothstep, safeMod }

@@ -5,6 +5,7 @@ import gsap from 'gsap'
 import lab from '../../data/lab.js'
 import { TextCanvas } from '../TextCanvas.js'
 import { add, color, float, Fn, If, luminance, mix, mul, normalWorld, positionGeometry, positionWorld, sin, step, texture, uniform, uv, vec2, vec3, vec4 } from 'three/tsl'
+import { remapClamp, safeMod } from '../utilities/maths.js'
 
 export class Lab
 {
@@ -30,6 +31,7 @@ export class Lab
         
         this.references = references
         this.state = Lab.STATE_CLOSED
+        this.data = lab
 
         this.setInteractiveArea()
         this.setInputs()
@@ -37,7 +39,7 @@ export class Lab
         this.setShadeMix()
         this.setTexts()
         this.setHover()
-        this.setProjects()
+        this.setNavigation()
         this.setImages()
         this.setAdjacents()
         this.setTitle()
@@ -110,10 +112,10 @@ export class Lab
         this.cinematic = {}
         
         this.cinematic.position = new THREE.Vector3()
-        this.cinematic.positionOffset = new THREE.Vector3(4.65, 4.05, 4.85)
+        this.cinematic.positionOffset = new THREE.Vector3(4.65, 4.20, 4.85)
         
         this.cinematic.target = new THREE.Vector3()
-        this.cinematic.targetOffset = new THREE.Vector3(-2.60, 1.25, -4.80)
+        this.cinematic.targetOffset = new THREE.Vector3(-2.60, 1.12, -4.80)
 
         const applyPositionAndTarget = () =>
         {
@@ -237,15 +239,14 @@ export class Lab
         this.hover.activeMaterial.outputNode = vec4(this.hover.baseColor.mul(1.5), float(1))
     }
 
-    setProjects()
+    setNavigation()
     {
-        this.projects = {}
-        this.projects.index = 0
-        this.projects.current = null
-        this.projects.next = null
-        this.projects.previous = null
-        this.projects.items = lab
-        this.projects.direction = Lab.DIRECTION_NEXT
+        this.navigation = {}
+        this.navigation.index = 0
+        this.navigation.current = null
+        this.navigation.next = null
+        this.navigation.previous = null
+        this.navigation.direction = Lab.DIRECTION_NEXT
     }
 
     setImages()
@@ -257,6 +258,7 @@ export class Lab
         // Mesh
         this.images.mesh = this.references.get('images')[0]
         this.images.mesh.receiveShadow = true
+        this.images.mesh.castShadow = false
 
         // Sources
         this.images.resources = new Map()
@@ -330,7 +332,7 @@ export class Lab
         this.images.loadEnded = (key) =>
         {
             // Current image => Reveal
-            if(this.projects.current.image === key)
+            if(this.navigation.current.image === key)
             {
                 this.images.textureNew.needsUpdate = true
                 gsap.to(this.images.loadProgress, { value: 1, duration: 1, overwrite: true })
@@ -342,20 +344,20 @@ export class Lab
         // Load sibling
         this.images.loadSibling = () =>
         {
-            let projectIndex = this.projects.index
+            let projectIndex = this.navigation.index
 
-            if(this.projects.direction === Lab.DIRECTION_PREVIOUS)
+            if(this.navigation.direction === Lab.DIRECTION_PREVIOUS)
                 projectIndex -= 1
             else
                 projectIndex += 1
 
             if(projectIndex < 0)
-                projectIndex = this.projects.items.length - 1
+                projectIndex = this.data.length - 1
 
-            if(projectIndex > this.projects.items.length - 1)
+            if(projectIndex > this.data.length - 1)
                 projectIndex = 0
 
-            const key = this.projects.items[projectIndex].image
+            const key = this.data[projectIndex].image
             const resource = this.images.getResourceAndLoad(key)
         }
 
@@ -404,7 +406,7 @@ export class Lab
         this.images.update = () =>
         {
             // Get resource
-            const key = this.projects.current.image
+            const key = this.navigation.current.image
             const resource = this.images.getResourceAndLoad(key)
 
             if(resource.loaded)
@@ -427,7 +429,7 @@ export class Lab
 
             // Animate right away
             gsap.fromTo(this.images.animationProgress, { value: 0 }, { value: 1, duration: 1, ease: 'power2.inOut', overwrite: true })
-            this.images.animationDirection.value = this.projects.direction === Lab.DIRECTION_NEXT ? 1 : -1
+            this.images.animationDirection.value = this.navigation.direction === Lab.DIRECTION_NEXT ? 1 : -1
         }
     }
 
@@ -499,31 +501,6 @@ export class Lab
                 arrowNext.material = this.hover.inactiveMaterial
             }
         })
-
-        /**
-         * Update
-         */
-        this.adjacents.update = () =>
-        {
-            if(this.adjacents.status === 'hiding')
-                return
-
-            this.adjacents.status = 'hiding'
-
-            gsap.to(this.adjacents.previous.inner.rotation, { z: Math.PI * 0.5, duration: 0.5, delay: 0, ease: 'power2.in', overwrite: true })
-            gsap.to(this.adjacents.next.inner.rotation, { z: - Math.PI * 0.5, duration: 0.5, delay: 0.2, ease: 'power2.in', overwrite: true })
-
-            gsap.delayedCall(1, () =>
-            {
-                this.adjacents.status = 'visible'
-
-                gsap.to(this.adjacents.previous.inner.rotation, { z: 0, duration: 1, delay: 0, ease: 'back.out(2)', overwrite: true })
-                gsap.to(this.adjacents.next.inner.rotation, { z: 0, duration: 1, delay: 0.4, ease: 'back.out(2)', overwrite: true })
-
-                this.adjacents.previous.textCanvas.updateText(this.projects.previous.titleSmall)
-                this.adjacents.next.textCanvas.updateText(this.projects.next.titleSmall)
-            })
-        }
     }
 
     setTitle()
@@ -560,7 +537,7 @@ export class Lab
 
                 gsap.to(this.title.inner.rotation, { x: Math.PI * 2 * rotationDirection, duration: 1, delay: 0, ease: 'back.out(2)', overwrite: true })
 
-                this.title.textCanvas.updateText(this.projects.current.title)
+                this.title.textCanvas.updateText(this.navigation.current.title)
             } })
         }
     }
@@ -651,7 +628,7 @@ export class Lab
 
                 gsap.to(this.url.inner.rotation, { x: Math.PI * 2 * rotationDirection, duration: 1, delay: 0, ease: 'back.out(2)', overwrite: true })
 
-                this.url.textCanvas.updateText(this.projects.current.url.replace(/https?:\/\//, ''))
+                this.url.textCanvas.updateText(this.navigation.current.url.replace(/https?:\/\//, ''))
 
                 const ratio = this.url.textCanvas.getMeasure().width / this.texts.density
                 this.url.panel.scale.x = ratio + 0.2
@@ -662,9 +639,9 @@ export class Lab
         // Open
         this.url.open = () =>
         {
-            if(this.projects.current.url)
+            if(this.navigation.current.url)
             {
-                window.open(this.projects.current.url, '_blank')
+                window.open(this.navigation.current.url, '_blank')
             }
         }
     }
@@ -676,7 +653,7 @@ export class Lab
         this.scroller.chainLeft = this.references.get('chainLeft')[0]
         this.scroller.chainRight = this.references.get('chainRight')[0]
         this.scroller.chainPulley = this.references.get('chainPulley')[0]
-        this.scroller.offset = 0
+        this.scroller.progress = 0
 
         // Vertical chain material
         {
@@ -727,19 +704,117 @@ export class Lab
             this.scroller.chainPulley.material = material
         }
 
+        // Minis
+        {
+            const groupTemplate = this.references.get('mini')[0]
+            const parent = groupTemplate.parent
+            groupTemplate.removeFromParent()
+            
+            this.scroller.minis = {}
+            this.scroller.minis.inter = 0.9
+            this.scroller.minis.items = []
+            this.scroller.minis.amplitude = 3
+            this.scroller.minis.total = this.data.length * this.scroller.minis.inter
+
+            let i = 0
+            for(const project of this.data)
+            {
+                const mini = {}
+                mini.y = - i * this.scroller.minis.inter
+                this.scroller.minis.items.push(mini)
+
+                // Group
+                mini.group = groupTemplate.clone(true)
+                mini.group.position.y = mini.y
+                mini.group.visible = true
+                parent.add(mini.group)
+
+                // Image
+                const material = new THREE.MeshLambertNodeMaterial()
+
+                const loadProgress = uniform(0)
+                const totalShadows = this.game.lighting.addTotalShadowToMaterial(this.images.material)
+
+                const imageElement = new Image()
+                imageElement.width = 240
+                imageElement.height = 135
+                imageElement.onload = () =>
+                {
+                    gsap.to(loadProgress, { value: 1, duration: 0.3, overwrite: true })
+                    imageTexture.needsUpdate = true
+                }
+                imageElement.src = `lab/images/${project.imageMini}`
+
+                const imageTexture = new THREE.Texture(imageElement)
+                imageTexture.colorSpace = THREE.SRGBColorSpace
+                imageTexture.flipY = false
+                imageTexture.magFilter = THREE.LinearFilter
+                imageTexture.minFilter = THREE.LinearFilter
+                imageTexture.generateMipmaps = false
+
+                material.outputNode = Fn(() =>
+                {
+                    const textureColor = texture(imageTexture).rgb
+                    textureColor.assign(mix(color('#333333'), textureColor, this.images.loadProgress))
+        
+                    const shadedOutput = this.game.lighting.lightOutputNodeBuilder(textureColor, float(1), normalWorld, totalShadows)
+
+                    return vec4(mix(shadedOutput.rgb, textureColor, this.shadeMix.images.uniform), 1)
+                })()
+                mini.image = mini.group.children.find(_child => _child.name.startsWith('image'))
+                mini.image.receiveShadow = true
+                mini.image.castShadow = false
+                mini.image.material = material
+
+                // Text
+                const textMesh = mini.group.children.find(_child => _child.name.startsWith('text'))
+                const panelMesh = mini.group.children.find(_child => _child.name.startsWith('panel'))
+                const textCanvas = new TextCanvas(
+                    this.texts.fontFamily,
+                    this.texts.fontWeight,
+                    this.texts.fontSizeMultiplier * 0.18,
+                    1.5,
+                    0.2,
+                    this.texts.density,
+                    'center',
+                    0.2
+                )
+                textCanvas.updateText(project.title)
+
+                const ratio = textCanvas.getMeasure().width / this.texts.density
+                panelMesh.scale.x = ratio + 0.2
+
+                this.texts.createMaterialOnMesh(textMesh, textCanvas.texture)
+
+                i++
+            }
+        }
+
         this.scroller.update = () =>
         {
-            this.scroller.chainLeft.position.y = - this.scroller.repeatAmplitude * 0.5 + this.scroller.offset % this.scroller.repeatAmplitude
-            this.scroller.chainRight.position.y = - this.scroller.repeatAmplitude * 0.5 - (this.scroller.offset % this.scroller.repeatAmplitude)
-            this.scroller.chainPulley.rotation.z = - this.scroller.offset * 1.4
+            this.scroller.chainLeft.position.y = - this.scroller.repeatAmplitude * 0.5 - this.scroller.offset % this.scroller.repeatAmplitude
+            this.scroller.chainRight.position.y = - this.scroller.repeatAmplitude * 0.5 + (this.scroller.offset % this.scroller.repeatAmplitude)
+            this.scroller.chainPulley.rotation.z = this.scroller.offset * 1.4
+
+            for(const mini of this.scroller.minis.items)
+            {
+                
+                mini.group.position.y = safeMod(mini.y - this.scroller.offset, this.scroller.minis.total) - 1
+
+                const scale = remapClamp(mini.group.position.y, 3.1, 3.7, 1, 0)
+                mini.group.scale.setScalar(scale)
+                mini.group.rotation.y = 0.523 - (1 - scale) * 3
+
+                mini.group.visible = scale > 0
+            }
         }
 
         this.game.ticker.events.on('tick', () =>
         {
-            this.scroller.offset -= this.game.ticker.deltaScaled * 0.2
+            this.scroller.progress -= this.game.ticker.deltaScaled * 0.2
+            this.scroller.offset = this.scroller.progress * this.scroller.minis.inter
 
             this.scroller.update()
-            // console.log(this.scroller.offset)
         })
     }
 
@@ -1018,7 +1093,7 @@ export class Lab
         if(this.state === Lab.STATE_CLOSED || this.state === Lab.STATE_CLOSING)
             return
 
-        this.changeProject(this.projects.index - 1, Lab.DIRECTION_PREVIOUS)
+        this.changeProject(this.navigation.index - 1, Lab.DIRECTION_PREVIOUS)
 
         this.blackBoard.active = false
     }
@@ -1028,7 +1103,7 @@ export class Lab
         if(this.state === Lab.STATE_CLOSED || this.state === Lab.STATE_CLOSING)
             return
 
-        this.changeProject(this.projects.index + 1, Lab.DIRECTION_NEXT)
+        this.changeProject(this.navigation.index + 1, Lab.DIRECTION_NEXT)
 
         this.blackBoard.active = false
     }
@@ -1038,20 +1113,19 @@ export class Lab
         // Loop index
         let loopIndex = index
 
-        if(loopIndex > this.projects.items.length - 1)
+        if(loopIndex > this.data.length - 1)
             loopIndex = 0
         else if(loopIndex < 0)
-            loopIndex = this.projects.items.length - 1
+            loopIndex = this.data.length - 1
 
         // Save
-        this.projects.index = loopIndex
-        this.projects.current = this.projects.items[this.projects.index]
-        this.projects.previous = this.projects.items[(this.projects.index - 1) < 0 ? this.projects.items.length - 1 : this.projects.index - 1]
-        this.projects.next = this.projects.items[(this.projects.index + 1) % this.projects.items.length]
-        this.projects.direction = direction
+        this.navigation.index = loopIndex
+        this.navigation.current = this.data[this.navigation.index]
+        this.navigation.previous = this.data[(this.navigation.index - 1) < 0 ? this.data.length - 1 : this.navigation.index - 1]
+        this.navigation.next = this.data[(this.navigation.index + 1) % this.data.length]
+        this.navigation.direction = direction
 
         // Update components
-        // this.adjacents.update()
         this.title.update(direction)
         this.url.update(direction)
         this.images.update()
