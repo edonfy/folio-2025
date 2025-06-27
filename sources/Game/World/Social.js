@@ -29,7 +29,7 @@ export class Social
             { name: 'X', url: 'https://x.com/bruno_simon', align: InteractiveAreas.ALIGN_RIGHT },
             { name: 'Bluesky', url: 'https://bsky.app/profile/bruno-simon.bsky.social', align: InteractiveAreas.ALIGN_RIGHT },
             { name: 'Youtube', url: 'https://www.youtube.com/@BrunoSimon', align: InteractiveAreas.ALIGN_RIGHT },
-            { name: 'simon.bruno.77@gmail.com', url: 'mailto:simon.bruno.77@gmail.com', align: InteractiveAreas.ALIGN_RIGHT },
+            { name: 'Mail', url: 'mailto:simon.bruno.77@gmail.com', align: InteractiveAreas.ALIGN_RIGHT },
             { name: 'Twitch', url: 'https://www.twitch.tv/bruno_simon_dev', align: InteractiveAreas.ALIGN_RIGHT },
             { name: 'GitHub', url: 'https://github.com/brunosimon', align: InteractiveAreas.ALIGN_RIGHT },
             { name: 'LinkedIn', url: 'https://www.linkedin.com/in/simonbruno77/', align: InteractiveAreas.ALIGN_LEFT },

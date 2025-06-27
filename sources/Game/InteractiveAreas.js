@@ -126,6 +126,7 @@ export class InteractiveAreas
             this.geometries.plane,
             diamondMaterial
         )
+        diamond.renderOrder = 3
         diamond.rotation.z = Math.PI * 0.25
         group.add(diamond)
 
@@ -150,6 +151,7 @@ export class InteractiveAreas
             this.geometries.plane,
             keyMaterial
         )
+        key.renderOrder = 3
         key.scale.setScalar(0)
         key.position.z = 0.01
         key.visible = false
@@ -199,7 +201,7 @@ export class InteractiveAreas
         // Material
         const labelMaterial = new THREE.MeshLambertNodeMaterial({ transparent: true, depthTest: false })
 
-        const labelOffset = uniform(1)
+        const labelOffset = uniform(align === InteractiveAreas.ALIGN_LEFT ? - 1 : 1)
         labelMaterial.outputNode = Fn(() =>
         {
             // const _uv = uv().add(vec2(labelOffset, 0)).toVar()
@@ -227,6 +229,7 @@ export class InteractiveAreas
             this.geometries.label,
             labelMaterial
         )
+        label.renderOrder = 3
         label.scale.x = 0.75 * width / height
         label.scale.y = 0.75
         label.position.z = -0.01
@@ -266,6 +269,7 @@ export class InteractiveAreas
         // Open
         item.open = () =>
         {
+            console.log('open')
             item.state = InteractiveAreas.STATE_OPEN
 
             diamond.visible = true
@@ -298,7 +302,7 @@ export class InteractiveAreas
 
             gsap.to(key.scale, { x: 0, y: 0, z: 0, ease: 'power2.in', duration: 0.6, overwrite: true })
 
-            gsap.to(labelOffset, { value: 1, ease: 'power2.in', duration: 0.6, overwrite: true })
+            gsap.to(labelOffset, { value: align === InteractiveAreas.ALIGN_LEFT ? - 1 : 1, ease: 'power2.in', duration: 0.6, overwrite: true })
         }
 
         // Interact
