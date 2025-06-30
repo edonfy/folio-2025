@@ -114,6 +114,8 @@ export class Physics
 
             if(_colliderDescription.shape === 'cuboid')
                 colliderDescription = colliderDescription.cuboid(..._colliderDescription.parameters)
+            if(_colliderDescription.shape === 'ball')
+                colliderDescription = colliderDescription.ball(..._colliderDescription.parameters)
             if(_colliderDescription.shape === 'cylinder')
                 colliderDescription = colliderDescription.cylinder(..._colliderDescription.parameters)
             else if(_colliderDescription.shape === 'trimesh')

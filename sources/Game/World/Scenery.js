@@ -32,8 +32,8 @@ export class Scenery
         }
 
         this.setReferences()
-        this.setStaticObjects()
-        this.setDynamicsObjects()
+        // this.setStaticObjects()
+        this.setEntities()
         // this.setTest()
 
         this.bushes = new Bushes()
@@ -132,62 +132,65 @@ export class Scenery
         }
     }
 
-    setStaticObjects()
-    {
-        // let meshesCount = 0
-        // const inspectChildren = (model, indent = '') =>
-        // {
-        //     let children =[...model.children]
+    // setStaticObjects()
+    // {
+    //     // let meshesCount = 0
+    //     // const inspectChildren = (model, indent = '') =>
+    //     // {
+    //     //     let children =[...model.children]
 
-        //     for(const child of children)
-        //     {
-        //         let material = ''
+    //     //     for(const child of children)
+    //     //     {
+    //     //         let material = ''
                 
-        //         if(child.isMesh)
-        //         {
-        //             meshesCount++
-        //             material = `(${child.material ? child.material.name : 'no material'})`
-        //         }
+    //     //         if(child.isMesh)
+    //     //         {
+    //     //             meshesCount++
+    //     //             material = `(${child.material ? child.material.name : 'no material'})`
+    //     //         }
                 
-        //         let color = '#ffffff'
+    //     //         let color = '#ffffff'
 
-        //         if(child.isMesh)
-        //             color = 'cyan'
+    //     //         if(child.isMesh)
+    //     //             color = 'cyan'
 
-        //         console.log(`%c${indent}${child.name} ${material}`, `color: ${color}; font-weight: bold;`)
+    //     //         console.log(`%c${indent}${child.name} ${material}`, `color: ${color}; font-weight: bold;`)
 
-        //         if(child.name === 'hull012')
-        //             console.log(child)
+    //     //         if(child.name === 'hull012')
+    //     //             console.log(child)
 
-        //         if(child.children?.length)
-        //             inspectChildren(child, indent + '    ')
-        //     }
-        // }
+    //     //         if(child.children?.length)
+    //     //             inspectChildren(child, indent + '    ')
+    //     //     }
+    //     // }
 
-        // Models
-        const model = this.game.resources.sceneryStaticModel.scene
-        // inspectChildren(model)
-        // console.log('Meshes count:', meshesCount)
+    //     // Models
+    //     const model = this.game.resources.sceneryStaticModel.scene
+    //     // inspectChildren(model)
+    //     // console.log('Meshes count:', meshesCount)
         
-        // References
-        this.references.parse(model)
+    //     // References
+    //     this.references.parse(model)
 
-        // Entities
-        this.game.entities.addFromModel(
-            model,
-            null,
-            {
-                type: 'fixed',
-                friction: 0,
-            }
-        )
-    }
+    //     // Entities
+    //     this.game.entities.addFromModel(
+    //         model,
+    //         null,
+    //         {
+    //             type: 'fixed',
+    //             friction: 0,
+    //         }
+    //     )
+    // }
 
-    setDynamicsObjects()
+    setEntities()
     {
-        const model = [...this.game.resources.sceneryDynamicModel.scene.children]
+        const model = [...this.game.resources.sceneryModel.scene.children]
         for(const child of model)
         {
+            // References
+            this.references.parse(child)
+
             // Entities
             this.game.entities.addFromModel(
                 child,
@@ -195,7 +198,6 @@ export class Scenery
 
                 },
                 {
-                    type: 'dynamic',
                     friction: child.userData.friction ?? 0.5,
                     restitution: child.userData.restitution ?? 0.1,
                     position: child.position,

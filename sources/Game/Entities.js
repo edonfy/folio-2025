@@ -86,18 +86,22 @@ export class Entities
         return entity
     }
 
-    addFromModel(_model, _visualDescription = null, _physicalDescription = null)
+    addFromModel(_model, _visualDescription = {}, _physicalDescription = {})
     {
         // Extract physical from direct children and remove from scene
-        const physical = _model.children.find(_child => _child.name.startsWith('physical') )
-        if(physical)
-            physical.removeFromParent()
-    
+        const physical = _model.children.find(_child => _child.name.startsWith('physical'))
+
         // Create collider from physical children names and scales
         const colliders = []
-
         if(physical)
         {
+            physical.removeFromParent()
+            
+            if(typeof _physicalDescription.type === 'undefined')
+            {
+                _physicalDescription.type = physical.name.match(/dynamic/i) ? 'dynamic' : 'fixed'
+            }
+
             for(const _physical of physical.children)
             {
                 let collidersOverwrite = {}
@@ -129,21 +133,20 @@ export class Entities
                     collider.shape = 'cylinder'
                     collider.parameters = [ _physical.scale.y * 0.5, _physical.scale.x * 0.5 ]
                 }
+                else if(_physical.name.match(/^ball/i) || _physical.name.match(/^sphere/i))
+                {
+                    collider.shape = 'ball'
+                    collider.parameters = [ _physical.scale.y * 0.5 ]
+                }
 
                 colliders.push(collider)
             }
         }
-
+        
         // Add
         return this.add(
-            {
-                ..._visualDescription,
-                model: _model
-            },
-            {
-                ..._physicalDescription,
-                colliders: colliders
-            }
+            { ..._visualDescription, model: _model },
+            physical ? { ..._physicalDescription, colliders: colliders } : null
         )
     }
 

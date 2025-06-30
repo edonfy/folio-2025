@@ -1056,7 +1056,7 @@ export class Lab
             this.cauldron.heat.castShadow = false
         }
 
-        // Wood
+        // Burning wood
         {
             const material = new THREE.MeshLambertNodeMaterial()
             const totalShadows = this.game.lighting.addTotalShadowToMaterial(material)
