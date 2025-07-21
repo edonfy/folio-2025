@@ -23,8 +23,8 @@ export class World
         this.game = Game.getInstance()
 
         this.visualVehicle = new VisualVehicle()
-        // this.field = new Field()
-        this.grid = new Grid()
+        this.field = new Field()
+        // this.grid = new Grid()
         this.waterSurface = new WaterSurface()
         this.grass = new Grass()
         this.windLines = new WindLines()
@@ -35,6 +35,7 @@ export class World
         this.whispers = new Whispers()
         this.tornado = new Tornado()
         this.scenery = new Scenery()
+        this.easter = new Easter()
 
         // this.setAxesHelper()
         // this.setCollisionGroupsTest()

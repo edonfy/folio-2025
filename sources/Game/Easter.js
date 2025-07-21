@@ -238,7 +238,8 @@ export class Easter
                 this.modal.time.textContent = text
 
                 // Code
-                this.modal.code.textContent = this.code.toUpperCase()
+                if(this.modal.code)
+                    this.modal.code.textContent = this.code.toUpperCase()
 
                 // Link
                 this.modal.link.href = `https://threejs-journey.com/join/${this.code}`
@@ -255,14 +256,22 @@ export class Easter
 
         if(this.eggs.closest)
         {
-            this.game.world.visualVehicle.antenna.target.copy(this.eggs.closest.reference.position)
             this.eggs.tryCatch(this.eggs.closest)
         }
-        else
+
+
+        if(this.game.world.visualVehicle.antenna)
         {
-            // const forwardTarget = this.game.vehicle.position.clone().add(this.game.vehicle.forward.clone().multiplyScalar(35))
-            // forwardTarget.y += 1
-            // this.game.vehicle.antenna.target.copy(forwardTarget)
+            if(this.eggs.closest)
+            {
+                this.game.world.visualVehicle.antenna.target.copy(this.eggs.closest.reference.position)
+            }
+            else
+            {
+                const forwardTarget = this.game.vehicle.position.clone().add(this.game.vehicle.forward.clone().multiplyScalar(35))
+                forwardTarget.y += 1
+                this.game.vehicle.antenna.target.copy(forwardTarget)
+            }
         }
     }
 }
