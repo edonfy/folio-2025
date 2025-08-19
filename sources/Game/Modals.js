@@ -39,6 +39,7 @@ export class Modals
             this.state = Modals.CLOSED
             this.current.events.trigger('closed')
             this.current.element.classList.remove('is-displayed')
+            this.current = null
             
             // Pending => Open pending
             if(this.pending)
@@ -90,20 +91,6 @@ export class Modals
                 this.pending = null
                 this.close()
             })
-        }
-    }
-
-    toggle()
-    {
-        if(this.state === Modals.OPEN || this.state === Modals.OPENING)
-        {
-            this.pending = null
-            this.close()
-        }
-        else if(this.state === Modals.CLOSED || this.state === Modals.CLOSING)
-        {
-            if(this.default)
-                this.open(this.default.name)
         }
     }
 

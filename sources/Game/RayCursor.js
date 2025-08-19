@@ -43,10 +43,8 @@ export class RayCursor
             // Start
             if(action.trigger === 'start')
             {
-                console.log('start')
                 if(this.currentIntersect)
                 {
-                    console.log('yup')
                     this.currentIntersect.isDown = true
 
                     if(typeof this.currentIntersect.onDown === 'function')
@@ -57,7 +55,6 @@ export class RayCursor
             // End
             else if(action.trigger === 'end')
             {
-                console.log('end')
                 const intersects = this.intersects.filter(intersect => intersect.active)
 
                 // Each intersect
