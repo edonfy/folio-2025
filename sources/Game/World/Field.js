@@ -13,7 +13,6 @@ export class Field
 
         this.setVisual()
         this.setPhysical()
-        // this.setKeys()
 
         this.game.ticker.events.on('tick', () =>
         {
@@ -28,7 +27,7 @@ export class Field
         this.subdivisions = this.size
 
         // Geometry
-        const geometry = new THREE.PlaneGeometry(this.size, this.size, this.subdivisions, this.subdivisions)
+        let geometry = new THREE.PlaneGeometry(this.size, this.size, this.subdivisions, this.subdivisions)
         geometry.rotateX(-Math.PI * 0.5)
         geometry.deleteAttribute('normal')
 
@@ -65,29 +64,22 @@ export class Field
         this.mesh.receiveShadow = true
         // this.mesh.castShadow = true
         this.game.scene.add(this.mesh)
-    }
 
-    setKeys()
-    {
-        // Geometry
-        const geometry = new THREE.PlaneGeometry(4, 1)
+        // Resize
+        this.game.viewport.events.on('throttleChange', () =>
+        {
+            this.size = Math.round(this.game.view.optimalArea.radius * 2) + 1
+            this.halfSize = this.size * 0.5
+            this.subdivisions = this.size
+            
+            geometry.dispose()
+            
+            geometry = new THREE.PlaneGeometry(this.size, this.size, this.subdivisions, this.subdivisions)
+            geometry.rotateX(-Math.PI * 0.5)
+            geometry.deleteAttribute('normal')
 
-        // Material
-        const material = new THREE.MeshBasicNodeMaterial({
-            alphaMap: this.game.resources.floorKeysTexture,
-            alphaTest: 0.5
-        })
-
-        // Mesh
-        this.keys = new THREE.Mesh(geometry, material)
-        // this.keys.castShadow = true
-        // this.keys.receiveShadow = true
-        this.keys.scale.setScalar(3)
-        this.keys.rotation.x = - Math.PI * 0.5
-        this.keys.rotation.z = Math.PI * 0.5
-        this.keys.position.y = 1
-        this.keys.position.x = 4
-        this.game.scene.add(this.keys)
+            this.mesh.geometry = geometry
+        }, 2)
     }
 
     setPhysical()

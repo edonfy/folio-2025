@@ -70,7 +70,7 @@ export class Game
                     // [ 'vehicle',                              'vehicle/defaultAntenna.glb',                   'gltf'    ],
                     [ 'playgroundVisual',                     'playground/playgroundVisual.glb',              'gltf'    ],
                     [ 'playgroundPhysical',                   'playground/playgroundPhysical.glb',            'gltf'    ],
-                    [ 'floorKeysTexture',                     'floor/keys.png',                               'texture' ],
+                    // [ 'floorKeysTexture',                     'floor/keys.png',                               'texture' ],
                     [ 'flowersReferencesModel',               'flowers/flowersReferences.glb',                'gltf'    ],
                     [ 'bricksReferencesModel',                'bricks/bricksReferences.glb',                  'gltf'    ],
                     [ 'bricksVisualModel',                    'bricks/bricksVisual.glb',                      'gltf'    ],

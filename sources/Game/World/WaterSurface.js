@@ -330,7 +330,6 @@ export class WaterSurface
         
         const halfExtent = this.game.view.optimalArea.radius
         this.mesh.scale.setScalar(halfExtent * 2)
-        console.log(halfExtent * 2)
 
         this.mesh.position.y = - 0.3
         this.mesh.castShadow = true
@@ -341,7 +340,6 @@ export class WaterSurface
         {
             const halfExtent = this.game.view.optimalArea.radius
             this.mesh.scale.setScalar(halfExtent * 2)
-            console.log(halfExtent * 2)
         }, 2)
     }
 
