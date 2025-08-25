@@ -26,7 +26,7 @@ export class Inputs
         this.setGamepad()
         this.setPointer()
         this.setWheel()
-        this.setNipple()
+        // this.setNipple()
         this.setTouchButtons()
 
         this.addActions(actions)

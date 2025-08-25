@@ -573,7 +573,12 @@ export class View
             this.focusPoint.position.z = this.focusPoint.trackedPosition.z
         }
 
-        const newSmoothFocusPoint = this.focusPoint.smoothedPosition.clone().lerp(this.focusPoint.position, this.game.ticker.delta * 10)
+        let newSmoothFocusPoint = null
+        if(this.game.inputs.pointer.mode === Pointer.MODE_TOUCH)
+            newSmoothFocusPoint = this.focusPoint.smoothedPosition.copy(this.focusPoint.position)
+        else
+            newSmoothFocusPoint = this.focusPoint.smoothedPosition.clone().lerp(this.focusPoint.position, this.game.ticker.delta * 10)
+        
         const smoothFocusPointDelta = newSmoothFocusPoint.clone().sub(this.focusPoint.smoothedPosition)
         const focusPointSpeed = Math.hypot(smoothFocusPointDelta.x, smoothFocusPointDelta.z) / this.game.ticker.delta
         this.focusPoint.smoothedPosition.copy(newSmoothFocusPoint)

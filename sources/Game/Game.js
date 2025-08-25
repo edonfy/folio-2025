@@ -37,6 +37,7 @@ import { Respawns } from './Respawns.js'
 import { Audio } from './Audio.js'
 import { ClosingManager } from './ClosingManager.js'
 import { RayCursor } from './RayCursor.js'
+import { TouchJoystick } from './TouchJoystick.js'
 
 export class Game
 {
@@ -130,6 +131,7 @@ export class Game
         this.inputs = new Inputs([], [])
         this.rayCursor = new RayCursor()
         this.debug = new Debug()
+        this.touchJoystick = new TouchJoystick()
         this.time = new Time()
         this.viewport = new Viewport(this.domElement)
         this.modals = new Modals()
