@@ -101,7 +101,6 @@ export class Inputs
 
         this.pointer.events.on('move', () =>
         {
-            this.updateMode(this.pointer.mode === Pointer.MODE_MOUSE ? Inputs.MODE_MOUSEKEYBOARD : Inputs.MODE_TOUCH)
             this.change('Pointer.any', { x: this.pointer.current.x, y: this.pointer.current.y })
         })
     }
