@@ -37,25 +37,22 @@ export class ClosingManager
                     this.game.world.scenery.lab.close()
 
                 // Nothing opened and used the keyboard Escape key => Open default modal
-                else if(this.game.modals.default && action.activeKeys.has('Keyboard.Escape'))
-                    this.game.modals.open(this.game.modals.default.name)
+                else if(action.activeKeys.has('Keyboard.Escape'))
+                    this.game.modals.open('intro')
             }
         })
         
         this.game.inputs.events.on('pause', (action) =>
         {
-            if(this.game.modals.default === null)
-                return
-
             if(action.active)
             {
-                if((this.game.modals.state === Modals.OPEN || this.game.modals.state === Modals.OPENING) && this.game.modals.current && this.game.modals.current === this.game.modals.default)
+                if((this.game.modals.state === Modals.OPEN || this.game.modals.state === Modals.OPENING))
                 {
                     this.game.modals.close()
                 }
                 else
                 {
-                    this.game.modals.open(this.game.modals.default.name)
+                    this.game.modals.open('intro')
                 }
             }
         })
