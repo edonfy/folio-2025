@@ -7,8 +7,10 @@ export class Water
     {
         this.game = Game.getInstance()
 
-        this.elevation = uniform(-0.3)
-        this.amplitude = uniform(0.013)
+        this.elevation = -0.3
+
+        this.elevationUniform = uniform(this.elevation)
+        this.amplitudeUniform = uniform(0.013)
 
         // Debug
         if(this.game.debug.active)
@@ -17,8 +19,8 @@ export class Water
                 title: '💧 Water',
                 expanded: false,
             })
-            debugPanel.addBinding(this.elevation, 'value', { label: 'elevation', min: -1, max: 0, step: 0.001 })
-            debugPanel.addBinding(this.amplitude, 'value', { label: 'amplitude', min: 0, max: 0.5, step: 0.001 })
+            debugPanel.addBinding(this.elevationUniform, 'value', { label: 'elevation', min: -1, max: 0, step: 0.001 })
+            debugPanel.addBinding(this.amplitudeUniform, 'value', { label: 'amplitude', min: 0, max: 0.5, step: 0.001 })
         }
     }
 }

@@ -179,8 +179,8 @@ export class Physics
     
         for(const physical of this.physicals)
         {
-            const depth = Math.max(- physical.body.translation().y, 0)
-            physical.body.setGravityScale(1 + depth * physical.waterGravityMultiplier)
+            const waterDepth = Math.max(- physical.body.translation().y, this.game.water.elevation)
+            physical.body.setGravityScale(1 + waterDepth * physical.waterGravityMultiplier)
         }
         
         this.world.step()
