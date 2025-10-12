@@ -48,6 +48,7 @@ export default class Circuit
         this.setAirDancers()
         this.setBanners()
         this.setLeaderboard()
+        this.setLeaderboardReset()
         this.setPodium()
 
         this.game.materials.getFromName('circuitBrand').map.minFilter = THREE.LinearFilter
@@ -831,7 +832,7 @@ export default class Circuit
             { align: 'left', x: resolution * 0.625 },
         ]
         const interline = resolution / 12
-        this.leaderboard.drawScores = (scores = []) =>
+        this.leaderboard.draw = (scores = []) =>
         {
             // Clear
             context.fillStyle = '#000000'
@@ -845,20 +846,20 @@ export default class Circuit
             for(const score of scores)
             {
                 context.textAlign = columsSettings[0].align
-                context.fillText(rank, columsSettings[0].x, (rank + 1) * interline)
+                context.fillText(rank, columsSettings[0].x, (rank + 0.5) * interline)
 
                 context.textAlign = columsSettings[1].align
-                context.fillText(score[0], columsSettings[1].x, (rank + 1) * interline)
+                context.fillText(score[0], columsSettings[1].x, (rank + 0.5) * interline)
 
                 context.textAlign = columsSettings[2].align
-                context.fillText(score[1], columsSettings[2].x, (rank + 1) * interline)
+                context.fillText(score[1], columsSettings[2].x, (rank + 0.5) * interline)
 
                 rank++
             }
             textTexture.needsUpdate = true
         }
 
-        this.leaderboard.drawScores([
+        this.leaderboard.draw([
             [ 'BRU', '00:25:150' ],
             [ 'TTU', '00:27:153' ],
             [ 'ORS', '00:27:002' ],
@@ -870,6 +871,135 @@ export default class Circuit
             [ 'PRT', '00:45:035' ],
             [ 'BOO', '00:49:531' ],
         ])
+    }
+
+    setLeaderboardReset()
+    {
+        this.leaderboardReset = {}
+        this.leaderboardReset.isActive = false
+        this.leaderboardReset.interval = null
+        this.leaderboardReset.resetTime = null
+        this.leaderboardReset.lastTimeToReset = null
+        this.leaderboardReset.lastTimeDrawn = null
+
+        const width = 256
+        const height = 64
+
+        // Canvas
+        const font = `700 ${35}px "Nunito"`
+
+        const canvas = document.createElement('canvas')
+        canvas.style.position = 'fixed'
+        canvas.style.zIndex = 999
+        canvas.style.top = 0
+        canvas.style.left = 0
+        // document.body.append(canvas)
+
+        const context = canvas.getContext('2d')
+        context.font = font
+
+        canvas.width = width
+        canvas.height = height
+
+        // Texture
+        const textTexture = new THREE.Texture(canvas)
+        textTexture.minFilter = THREE.NearestFilter
+        textTexture.magFilter = THREE.NearestFilter
+        textTexture.generateMipmaps = false
+
+        // Digits
+        // const geometry = new THREE.PlaneGeometry(this.timer.digits.ratio, 1)
+
+        const material = new MeshDefaultMaterial({
+            colorNode: color('#463F35'),
+            hasWater: false,
+        })
+        
+        const baseOutput = material.outputNode
+        
+        material.outputNode = Fn(() =>
+        {
+            const text = texture(textTexture).r
+            return vec4(
+                mix(
+                    baseOutput.rgb,
+                    color('#ffffff').mul(1.3),
+                    text
+                ),
+                baseOutput.a
+            )
+        })()
+
+        const mesh = this.references.get('leaderboardReset')[0]
+        mesh.material = material
+
+        function timeToString(ms)
+        {
+            const hours = Math.floor(ms / 3600000)
+            const minutes = Math.floor((ms % 3600000) / 60000)
+            // const seconds = Math.floor((ms % 60000) / 1000)
+            // const milliseconds = ms % 1000
+            
+            const parts = []
+
+            if(hours > 0)
+                parts.push(`${hours}h`)
+
+            if(hours > 0 || minutes > 0)
+                parts.push(`${minutes}m`)
+
+            // if(hours > 0 || minutes > 0 || seconds > 0)
+            //     parts.push(`${seconds}s`)
+
+            return parts.join(' ')
+        }
+
+        this.leaderboardReset.activate = (resetTime = 0) =>
+        {
+            this.leaderboardReset.isActive = true
+            this.leaderboardReset.resetTime = resetTime
+
+            this.leaderboardReset.interval = setInterval(this.leaderboardReset.tryDraw, 1000)
+            this.leaderboardReset.tryDraw()
+        }
+
+        const dayDuration = 24 * 60 * 60 * 1000
+
+        this.leaderboardReset.tryDraw = () =>
+        {
+            const timeToReset = dayDuration - (Date.now() - this.leaderboardReset.resetTime) % dayDuration
+
+            const formatedTime = timeToString(timeToReset)
+
+            if(formatedTime !== this.leaderboardReset.lastTimeDrawn)
+            {
+                this.leaderboardReset.draw(`in ${formatedTime}`)
+                this.leaderboardReset.lastTimeDrawn = formatedTime
+            }
+
+            this.leaderboardReset.lastTimeToReset = timeToReset
+        }
+
+        this.leaderboardReset.draw = (text = '') =>
+        {
+            // Clear
+            context.fillStyle = '#000000'
+            context.fillRect(0, 0, canvas.width, canvas.height)
+
+            // Draw text
+            context.fillStyle = '#ffffff'
+            context.textAlign = 'center'
+            context.textBaseline = 'middle'
+            context.font = font
+            context.fillText(text, canvas.width * 0.5, canvas.height * 0.5)
+
+            textTexture.needsUpdate = true
+        }
+
+        const resetDate = new Date('2024/01/01 15:28:00')
+        const resetTime = resetDate.getTime() % dayDuration
+
+        this.leaderboardReset.activate(resetTime)
     }
 
     setPodium()
