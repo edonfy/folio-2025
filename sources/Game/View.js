@@ -22,6 +22,7 @@ export class View
         this.game = Game.getInstance()
         
         this.mode = View.MODE_DEFAULT
+        console.log(this.game.respawns.getDefault())
         this.position = new THREE.Vector3()
         this.delta = new THREE.Vector3()
         this.idealRatio = idealRatio
@@ -113,11 +114,13 @@ export class View
 
     setFocusPoint()
     {
+        const defaultRespawn = this.game.respawns.getDefault()
+        console.log(defaultRespawn.position.clone())
         this.focusPoint = {}
-        this.focusPoint.trackedPosition = new THREE.Vector3()
+        this.focusPoint.trackedPosition = new THREE.Vector3(defaultRespawn.position.x, 0, defaultRespawn.position.z)
         this.focusPoint.isTracking = true
-        this.focusPoint.position = new THREE.Vector3()
-        this.focusPoint.smoothedPosition = new THREE.Vector3()
+        this.focusPoint.position = this.focusPoint.trackedPosition.clone()
+        this.focusPoint.smoothedPosition = this.focusPoint.trackedPosition.clone()
         this.focusPoint.isEased = true
         this.focusPoint.easing = 1
 
@@ -249,7 +252,7 @@ export class View
     setZoom()
     {
         this.zoom = {}
-        this.zoom.baseRatio = 0
+        this.zoom.baseRatio = 0.6
         this.zoom.ratio = this.zoom.baseRatio
         this.zoom.smoothedRatio = this.zoom.baseRatio
         this.zoom.speedAmplitude = - 0.4

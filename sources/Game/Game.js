@@ -1,4 +1,3 @@
-import RAPIER from '@dimforge/rapier3d'
 import * as THREE from 'three/webgpu'
 
 import { Debug } from './Debug.js'
@@ -55,24 +54,64 @@ export class Game
 
         Game.instance = this
 
-        // Rapier init
-        // Load resources
+        this.init()
+    }
+
+    async init()
+    {
+        // Setup
+        this.domElement = document.querySelector('.game')
+        this.canvasElement = this.domElement.querySelector('.js-canvas')
+
+        // First batch for intro
         this.resourcesLoader = new ResourcesLoader()
-        this.resourcesLoader.load(
+        this.resources = await this.resourcesLoader.load([
+            [ 'respawnsModel', 'respawns/respawns.glb', 'gltf' ],
+        ])
+        this.scene = new THREE.Scene()
+        this.debug = new Debug()
+        this.server = new Server()
+        this.ticker = new Ticker()
+        this.time = new Time()
+        this.inputs = new Inputs([], [ 'intro' ])
+        this.rayCursor = new RayCursor()
+        this.viewport = new Viewport(this.domElement)
+        this.modals = new Modals()
+        this.respawns = new Respawns(import.meta.env.VITE_PLAYER_SPAWN || 'landing')
+        this.view = new View()
+        this.reveal = new Reveal()
+        this.rendering = new Rendering()
+        await this.rendering.init()
+        this.noises = new Noises()
+        this.dayCycles = new DayCycles()
+        this.yearCycles = new YearCycles()
+        this.weather = new Weather()
+        this.wind = new Wind()
+        this.tracks = new Tracks()
+        this.lighting = new Lighting()
+        this.fog = new Fog()
+        this.water = new Water()
+        this.materials = new Materials()
+        this.objects = new Objects()
+        this.explosions = new Explosions()
+        this.world = new World()
+
+        // Load and init RAPIER
+        const rapierPromise = import('@dimforge/rapier3d')
+
+        // Load rest of resources
+        const resourcesPromise = this.resourcesLoader.load(
             [
                 [ 'foliageTexture',                        'foliage/foliageSDF.png',                               'texture' ],
                 [ 'bushesReferences',                      'bushes/bushesReferences.glb',                          'gltf'    ],
                 [ 'vehicle',                               'vehicle/default.glb',                                  'gltf'    ],
-                // [ 'vehicle',                               'vehicle/defaultAntenna.glb',                           'gltf'    ],
                 [ 'playgroundVisual',                      'playground/playgroundVisual.glb',                      'gltf'    ],
                 [ 'playgroundPhysical',                    'playground/playgroundPhysical.glb',                    'gltf'    ],
-                // [ 'floorKeysTexture',                      'floor/keys.png',                                       'texture' ],
                 [ 'flowersReferencesModel',                'flowers/flowersReferences.glb',                        'gltf'    ],
                 [ 'bricksReferencesModel',                 'bricks/bricksReferences.glb',                          'gltf'    ],
                 [ 'bricksVisualModel',                     'bricks/bricksVisual.glb',                              'gltf'    ],
                 [ 'cratesModel',                           'crates/crates.glb',                                    'gltf'    ],
                 [ 'terrainTexture',                        'terrain/terrain.png',                                  'texture', (resource) => { resource.flipY = false; } ],
-                // [ 'terrainTexture',                        'terrain/flatGrass.png',                                'texture' ],
                 [ 'terrainModel',                          'terrain/terrain.glb',                                  'gltf'    ],
                 [ 'birchTreesVisualModel',                 'birchTrees/birchTreesVisual.glb',                      'gltf'    ],
                 [ 'birchTreesReferencesModel',             'birchTrees/birchTreesReferences.glb',                  'gltf'    ],
@@ -90,79 +129,33 @@ export class Game
                 [ 'interactivePointsKeyIconCrossTexture',  'interactivePoints/interactivePointsKeyIconCross.png',  'texture', (resource) => { resource.flipY = true; resource.minFilter = THREE.NearestFilter; resource.magFilter = THREE.NearestFilter; resource.generateMipmaps = false } ],
                 [ 'interactivePointsKeyIconEnterTexture',  'interactivePoints/interactivePointsKeyIconEnter.png',  'texture', (resource) => { resource.flipY = true; resource.minFilter = THREE.NearestFilter; resource.magFilter = THREE.NearestFilter; resource.generateMipmaps = false } ],
                 [ 'interactivePointsKeyIconATexture',      'interactivePoints/interactivePointsKeyIconA.png',      'texture', (resource) => { resource.flipY = true; resource.minFilter = THREE.NearestFilter; resource.magFilter = THREE.NearestFilter; resource.generateMipmaps = false } ],
-                [ 'respawnsModel',                         'respawns/respawns.glb',                                'gltf'    ],
                 [ 'jukeboxMusicNotes',                     'jukebox/jukeboxMusicNotes.png',                        'texture', (resource) => {  } ],
-
-                // [ 'easterEggVisualModel',                 'easter/easterEggVisual.glb',                   'gltf'    ],
-                // [ 'easterEggReferencesModel',             'easter/easterEggReferences.glb',               'gltf'    ],
-                
-                // [ 'christmasTreeVisualModel',     'christmas/christmasTreeVisual.glb',     'gltf' ],
-                // [ 'christmasTreePhysicalModel',   'christmas/christmasTreePhysical.glb',   'gltf' ],
-                // [ 'christmasGiftVisualModel',     'christmas/christmasGiftVisual.glb',     'gltf' ],
-                // [ 'christmasGiftReferencesModel', 'christmas/christmasGiftReferences.glb', 'gltf' ],
-            ],
-            (resources) =>
-            {
-                this.resources = resources
-
-                // Init
-                this.init()
-            }
+            ]
         )
-    }
 
-    init()
-    {
-        // Setup
-        this.domElement = document.querySelector('.game')
-        this.canvasElement = this.domElement.querySelector('.js-canvas')
+        const [ newResources, RAPIER ] = await Promise.all([ resourcesPromise, rapierPromise ])
+        this.RAPIER = RAPIER
+        this.resources = { ...newResources }
 
-        this.scene = new THREE.Scene()
+        this.terrain = new Terrain()
+        this.physics = new Physics()
+        this.wireframe = new PhysicsWireframe()
+        this.physicalVehicle = new PhysicsVehicle()
+        this.zones = new Zones()
+        this.player = new Player()
+        this.tornado = new Tornado()
+        this.interactivePoints = new InteractivePoints()
+        this.overlay = new Overlay()
+        this.closingManager = new ClosingManager()
+        // this.monitoring = new Monitoring()
+        this.world.initRest()
 
-        this.debug = new Debug()
-        this.server = new Server()
-        this.ticker = new Ticker()
-        this.time = new Time()
-        this.inputs = new Inputs([], [ 'wandering' ])
-        this.rayCursor = new RayCursor()
-        this.viewport = new Viewport(this.domElement)
-        this.modals = new Modals()
-        this.view = new View()
-        this.reveal = new Reveal()
-        this.rendering = new Rendering(() =>
+        requestAnimationFrame(() =>
         {
-            this.noises = new Noises()
-            // this.audio = new Audio()
-            this.dayCycles = new DayCycles()
-            this.yearCycles = new YearCycles()
-            this.weather = new Weather()
-            this.wind = new Wind()
-            this.tracks = new Tracks()
-            this.terrain = new Terrain()
-            this.lighting = new Lighting()
-            this.fog = new Fog()
-            this.water = new Water()
-            this.materials = new Materials()
-            this.objects = new Objects()
-            this.explosions = new Explosions()
-            this.physics = new Physics()
-            this.wireframe = new PhysicsWireframe()
-            this.physicalVehicle = new PhysicsVehicle()
-            this.zones = new Zones()
-            this.respawns = new Respawns()
-            this.player = new Player()
-            this.tornado = new Tornado()
-            this.interactivePoints = new InteractivePoints()
-            this.world = new World()
-            this.overlay = new Overlay()
-            this.closingManager = new ClosingManager()
-            // this.monitoring = new Monitoring()
-
-            this.rendering.renderer.setAnimationLoop((elapsedTime) => { this.ticker.update(elapsedTime) })
-            setTimeout(() => 
+            requestAnimationFrame(() =>
             {
                 this.reveal.expose()
-            }, 1000)
+            })
         })
     }
 }

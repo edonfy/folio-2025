@@ -10,7 +10,6 @@ export class Terrain
         this.game = Game.getInstance()
 
         this.subdivision = 256
-        this.geometry = this.game.resources.terrainModel.scene.children[0].geometry
 
         if(this.game.debug.active)
         {

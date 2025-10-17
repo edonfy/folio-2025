@@ -23,7 +23,7 @@ export class ResourcesLoader
         {
             const dracoLoader = new DRACOLoader()
             dracoLoader.setDecoderPath('./draco/')
-            dracoLoader.preload()
+            // dracoLoader.preload()
             
             loader = new GLTFLoader()
             loader.setDRACOLoader(dracoLoader)
@@ -34,63 +34,67 @@ export class ResourcesLoader
         return loader
     }
 
-    load(_files, _callback = null)
+    load(_files)
     {
-        let toLoad = _files.length
-        const loadedResources = {}
-
-        // Progress
-        const progress = () =>
+        return new Promise((resolve, reject) =>
         {
-            toLoad--
-            
-            if(toLoad === 0)
-                _callback(loadedResources)
-        }
+            let toLoad = _files.length
+            const loadedResources = {}
 
-        // Save
-        const save = (_file, _resource) =>
-        {
-            // Apply modifier
-            if(typeof _file[3] !== 'undefined')
-                _file[3](_resource)
+            // Progress
+            const progress = () =>
+            {
+                toLoad--
                 
-            // Save in resources object
-            loadedResources[_file[0]] = _resource
-
-            // Save in cache
-            this.cache.set(_file[1], _resource)
-        }
-
-        // Error
-        const error = (_file) =>
-        {
-            console.log(`Resources > Couldn't load file ${_file[1]}`)
-        }
-
-        // Each file
-        for(const _file of _files)
-        {
-            // In cache
-            if(this.cache.has(_file[1]))
-            {
-                progress()
+                if(toLoad === 0)
+                    resolve(loadedResources)
             }
 
-            // Not in cache
-            else
+            // Save
+            const save = (_file, _resource) =>
             {
-                const loader = this.getLoader(_file[2])
-                loader.load(
-                    _file[1],
-                    resource => {
-                        save(_file, resource)
-                        progress()
-                    },
-                    undefined,
-                    // resource => { error(_file, resource) },
-                )
+                // Apply modifier
+                if(typeof _file[3] !== 'undefined')
+                    _file[3](_resource)
+                    
+                // Save in resources object
+                loadedResources[_file[0]] = _resource
+
+                // Save in cache
+                this.cache.set(_file[1], _resource)
             }
-        }
+
+            // Error
+            const error = (_file) =>
+            {
+                console.log(`Resources > Couldn't load file ${_file[1]}`)
+                reject(_file[1])
+            }
+
+            // Each file
+            for(const _file of _files)
+            {
+                // In cache
+                if(this.cache.has(_file[1]))
+                {
+                    progress()
+                }
+
+                // Not in cache
+                else
+                {
+                    const loader = this.getLoader(_file[2])
+                    loader.load(
+                        _file[1],
+                        resource => {
+                            save(_file, resource)
+                            progress()
+                        },
+                        undefined,
+                        error
+                    )
+                }
+            }
+        })
     }
 }

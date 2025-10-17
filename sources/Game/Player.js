@@ -20,7 +20,7 @@ export class Player
         this.braking = 0
         this.suspensions = ['low', 'low', 'low', 'low']
 
-        const respawn = this.game.respawns.getByName(import.meta.env.VITE_PLAYER_SPAWN) || this.game.respawns.getDefault()
+        const respawn = this.game.respawns.getDefault()
 
         this.position = respawn.position.clone()
         this.basePosition = this.position.clone()

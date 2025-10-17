@@ -6,11 +6,9 @@ import { cheapDOF } from './Passes/cheapDOF.js'
 
 export class Rendering
 {
-    constructor(readyCallback)
+    constructor()
     {
         this.game = Game.getInstance()
-
-        this.readyCallback = readyCallback
 
         if(this.game.debug.active)
         {
@@ -19,8 +17,11 @@ export class Rendering
                 expanded: false,
             })
         }
+    }
 
-        this.setRenderer()
+    async init()
+    {
+        const promise = await this.setRenderer()
         this.setPostprocessing()
 
         this.game.ticker.events.on('tick', () =>
@@ -32,6 +33,8 @@ export class Rendering
         {
             this.resize()
         })
+
+        return promise
     }
 
     setRenderer()
@@ -44,9 +47,11 @@ export class Rendering
         this.renderer.shadowMap.enabled = true
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
-        this.renderer
+        // Make the renderer control the ticker
+        this.renderer.setAnimationLoop((elapsedTime) => { this.game.ticker.update(elapsedTime) })
+
+        return this.renderer
             .init()
-            .then(this.readyCallback)
     }
 
     setPostprocessing()

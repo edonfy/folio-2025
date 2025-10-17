@@ -11,9 +11,7 @@ export class Grid
     {
         this.game = Game.getInstance()
 
-        this.geometry = this.game.resources.terrainModel.scene.children[0].geometry
-        // this.geometry = new THREE.PlaneGeometry(this.game.terrain.subdivision, this.game.terrain.subdivision).rotateX(-Math.PI * 0.5)
-        this.subdivision = this.game.terrain.subdivision
+        this.geometry = new THREE.PlaneGeometry(10, 10)
 
         if(this.game.debug.active)
         {
@@ -48,7 +46,8 @@ export class Grid
         const defaultMaterial = new MeshDefaultMaterial({
             colorNode: uvGridMaterial.outputNode.rgb,
             hasWater: false,
-            hasReveal: false
+            hasReveal: false,
+            hasLightBounce: false
         })
         
         uvGridMaterial.outputNode = Fn(() =>

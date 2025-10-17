@@ -30,8 +30,12 @@ export class World
     {
         this.game = Game.getInstance()
 
-        this.visualVehicle = new VisualVehicle()
         this.grid = new Grid()
+    }
+
+    initRest()
+    {
+        this.visualVehicle = new VisualVehicle()
         this.floor = new Floor()
         this.waterSurface = new WaterSurface()
         this.grass = new Grass()
@@ -52,7 +56,6 @@ export class World
         this.bricks = new Bricks()
         this.explosiveCrates = new ExplosiveCrates()
         this.areas = new Areas()
-
         // this.easter = new Easter()
 
         // this.setAxesHelper()
@@ -60,6 +63,7 @@ export class World
         // this.setNormalTest()
         // this.setTestMesh()
         // this.setTestShadow()
+
     }
 
     setTestShadow()

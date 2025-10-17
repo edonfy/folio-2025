@@ -37,8 +37,11 @@ export class Reveal
 
     expose(center = null)
     {
+        // Center
         const _center = center instanceof THREE.Vector2 ? center : new THREE.Vector2(this.game.player.position.x, this.game.player.position.z)
         this.center.value.copy(_center)
+
+        // Distance
         this.distance.value = 0
         
         gsap.to(
@@ -61,9 +64,43 @@ export class Reveal
                             }
                         }
                     )
+
+                    // gsap.delayedCall(0.75, () =>
+                    // {
+                        // Inputs filters
+                        this.game.inputs.filters.clear()
+                        this.game.inputs.filters.add('wandering')
+                    // })
                 }
             }
         )
+
+        // View
+        this.game.view.zoom.smoothedRatio = 0.6
+        this.game.view.zoom.baseRatio = 0.6
+
+        gsap.to(
+            this.game.view.zoom,
+            {
+                baseRatio: 0.3,
+                // smoothedRatio: 0.4,
+                ease: 'power3.out',
+                duration: 3,
+                onComplete: () =>
+                {
+                    gsap.to(
+                        this.game.view.zoom,
+                        {
+                            baseRatio: 0,
+                            // smoothedRatio: 0,
+                            ease: 'back.in(1.5)',
+                            duration: 1.5,
+                        }
+                    )
+                }
+            }
+        )
+        // this.game.view.zoom.baseRatio
     }
 
     update()

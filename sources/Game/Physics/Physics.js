@@ -1,5 +1,4 @@
 import { Game } from '../Game.js'
-import RAPIER from '@dimforge/rapier3d'
 import { PhysicsWireframe } from './PhysicsWireframe.js'
 import { remapClamp } from '../utilities/maths.js'
 import * as THREE from 'three/webgpu'
@@ -10,8 +9,8 @@ export class Physics
     {
         this.game = Game.getInstance()
 
-        this.world = new RAPIER.World({ x: 0.0, y: -9.81, z: 0.0 })
-        // this.eventQueue = new RAPIER.EventQueue(true)
+        this.world = new this.game.RAPIER.World({ x: 0.0, y: -9.81, z: 0.0 })
+        // this.eventQueue = new this.game.RAPIER.EventQueue(true)
 
         this.physicals = []
 
@@ -26,10 +25,10 @@ export class Physics
             bumper: (this.groups.bumper) << 16 | this.groups.object,
         }
         this.frictionRules = {
-            average: RAPIER.CoefficientCombineRule.Average,
-            min: RAPIER.CoefficientCombineRule.Min,
-            max: RAPIER.CoefficientCombineRule.Max,
-            multiply: RAPIER.CoefficientCombineRule.Multiply,
+            average: this.game.RAPIER.CoefficientCombineRule.Average,
+            min: this.game.RAPIER.CoefficientCombineRule.Min,
+            max: this.game.RAPIER.CoefficientCombineRule.Max,
+            multiply: this.game.RAPIER.CoefficientCombineRule.Multiply,
         }
 
         // this.world.integrationParameters.numSolverIterations = 4 // 4
@@ -77,7 +76,7 @@ export class Physics
         physical.waterGravityMultiplier = typeof _physicalDescription.waterGravityMultiplier !== 'undefined' ? _physicalDescription.waterGravityMultiplier : - 1.5
 
         // Body
-        let rigidBodyDesc = RAPIER.RigidBodyDesc
+        let rigidBodyDesc = this.game.RAPIER.RigidBodyDesc
         
         if(_physicalDescription.type === 'dynamic' || typeof _physicalDescription.type === 'undefined')
         {
@@ -135,7 +134,7 @@ export class Physics
         physical.colliders = []
         for(let _colliderDescription of _physicalDescription.colliders)
         {
-            let colliderDescription = RAPIER.ColliderDesc
+            let colliderDescription = this.game.RAPIER.ColliderDesc
 
             _colliderDescription = {
                 ..._colliderDescription,
@@ -202,7 +201,7 @@ export class Physics
             colliderDescription = colliderDescription.setCollisionGroups(this.categories[category])
 
             // if(typeof _colliderDescription.hasEvents !== 'undefined' && _colliderDescription.hasEvents === true)
-            //     colliderDescription = colliderDescription.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS)
+            //     colliderDescription = colliderDescription.setActiveEvents(this.game.RAPIER.ActiveEvents.COLLISION_EVENTS)
 
             const collider = this.world.createCollider(colliderDescription, physical.body)
             physical.colliders.push(collider)
