@@ -115,6 +115,7 @@ export class Reveal
             () =>
             {
                 this.game.interactivePoints.reveal()
+                this.game.world.init(2)
             },
             [],
             'c'

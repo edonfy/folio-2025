@@ -149,7 +149,7 @@ export class Game
         this.overlay = new Overlay()
         this.closingManager = new ClosingManager()
         // this.monitoring = new Monitoring()
-        this.world.initRest()
+        this.world.init(1)
 
         this.ticker.wait(3, () =>
         {

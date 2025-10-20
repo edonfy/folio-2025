@@ -30,40 +30,48 @@ export class World
     {
         this.game = Game.getInstance()
 
-        this.grid = new Grid()
-    }
-
-    initRest()
-    {
-        this.visualVehicle = new VisualVehicle()
-        this.floor = new Floor()
-        this.waterSurface = new WaterSurface()
-        this.grass = new Grass()
-        this.windLines = new WindLines()
-        this.confetti = new Confetti()
-        this.leaves = new Leaves()
-        this.rain = new RainLines()
-        this.lightnings = new Lightnings()
-        this.fireballs = new Fireballs()
-        this.snow = new Snow()
-        this.whispers = new Whispers()
-        this.tornado = new Tornado()
-        this.bushes = new Bushes()
-        this.birchTrees = new Trees('Birch Tree', this.game.resources.birchTreesVisualModel.scene, this.game.resources.birchTreesReferencesModel.scene.children, '#ff782b')
-        this.oakTrees = new Trees('Oak Tree', this.game.resources.oakTreesVisualModel.scene, this.game.resources.oakTreesReferencesModel.scene.children, '#c4c557')
-        this.cherryTrees = new Trees('Cherry Tree', this.game.resources.cherryTreesVisualModel.scene, this.game.resources.cherryTreesReferencesModel.scene.children, '#ff6da8')
-        this.flowers = new Flowers()
-        this.bricks = new Bricks()
-        this.explosiveCrates = new ExplosiveCrates()
-        this.areas = new Areas()
-        // this.easter = new Easter()
+        this.init(0)
 
         // this.setAxesHelper()
         // this.setCollisionGroupsTest()
         // this.setNormalTest()
         // this.setTestMesh()
         // this.setTestShadow()
+    }
 
+    init(step)
+    {
+        if(step === 0)
+        {
+            this.grid = new Grid()
+        }
+        else if(step === 1)
+        {
+            this.visualVehicle = new VisualVehicle()
+            this.floor = new Floor()
+            this.waterSurface = new WaterSurface()
+            this.grass = new Grass()
+            this.windLines = new WindLines()
+            this.confetti = new Confetti()
+            this.leaves = new Leaves()
+            this.rain = new RainLines()
+            this.lightnings = new Lightnings()
+            this.fireballs = new Fireballs()
+            this.snow = new Snow()
+            this.tornado = new Tornado()
+            this.bushes = new Bushes()
+            this.birchTrees = new Trees('Birch Tree', this.game.resources.birchTreesVisualModel.scene, this.game.resources.birchTreesReferencesModel.scene.children, '#ff782b')
+            this.oakTrees = new Trees('Oak Tree', this.game.resources.oakTreesVisualModel.scene, this.game.resources.oakTreesReferencesModel.scene.children, '#c4c557')
+            this.cherryTrees = new Trees('Cherry Tree', this.game.resources.cherryTreesVisualModel.scene, this.game.resources.cherryTreesReferencesModel.scene.children, '#ff6da8')
+            this.flowers = new Flowers()
+            this.bricks = new Bricks()
+            this.explosiveCrates = new ExplosiveCrates()
+            this.areas = new Areas()
+        }
+        else if(step === 2)
+        {
+            this.whispers = new Whispers()
+        }
     }
 
     setTestShadow()
