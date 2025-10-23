@@ -108,6 +108,10 @@ export class Bonfire
 
                     // Objects reset
                     this.game.objects.resetAll()
+
+                    // Bowling
+                    if(this.game.world.areas.bowling)
+                        this.game.world.areas.bowling.restart()
                 })
             },
             () =>

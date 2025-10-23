@@ -158,6 +158,20 @@ export class Bowling
         }
     }
 
+    restart()
+    {
+        this.won = false
+
+        this.pins.reset()
+        this.ball.reset()
+        this.screen.reset()
+
+        this.game.ticker.wait(1, () =>
+        {
+            this.restartInteractivePoint.hide()
+        })
+    }
+
     setRestart()
     {
         this.restartInteractivePoint = this.game.interactivePoints.create(
@@ -167,17 +181,7 @@ export class Bowling
             InteractivePoints.STATE_CONCEALED,
             () =>
             {
-                console.log('ok')
-                this.won = false
-
-                this.pins.reset()
-                this.ball.reset()
-                this.screen.reset()
-
-                this.game.ticker.wait(1, () =>
-                {
-                    this.restartInteractivePoint.hide()
-                })
+                this.restart()
             },
             () =>
             {
