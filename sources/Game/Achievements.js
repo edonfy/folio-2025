@@ -300,6 +300,32 @@ export class Achievements
                         this.game.world.confetti.pop(this.game.player.position.clone().add(new THREE.Vector3(1, -1, 1.5)))
                         this.game.world.confetti.pop(this.game.player.position.clone().add(new THREE.Vector3(1, -1, -1.5)))
                     }
+
+                    // Notification
+                    const html = /* html */`
+                        <div class="top">
+                            <div class="title">${title}</div>
+                            <div class="progress">
+                                <div class="check-icon"></div>
+                                <span class="check"></span>
+                                <span class="current">${total}</span> / <span>${total}</span>
+                            </div>
+                        </div>
+                        <div class="bottom">
+                            <div class="description">${description}</div>
+                            <div class="open-icon"></div>
+                        </div>
+                    `
+
+                    this.game.notifications.show(
+                        html,
+                        4,
+                        () => {
+                            this.game.inputs.interactiveButtons.clearItems()
+                            this.game.modals.open('achievements')
+                        }
+                    )
+
                 }
             }
         }

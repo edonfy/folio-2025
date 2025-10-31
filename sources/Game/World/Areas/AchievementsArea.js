@@ -256,8 +256,8 @@ export class AchievementsArea extends Area
 
                 // Emissive
                 const emissiveOutput = mix(
-                    emissiveDefaultMaterial.outputNode,
                     emissiveAchievedMaterial.outputNode,
+                    emissiveDefaultMaterial.outputNode,
                     float(instanceIndex).div(count).step(this.game.achievements.globalProgress.ratioUniform)
                 )
 

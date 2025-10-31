@@ -40,6 +40,7 @@ import { Water } from './Water.js'
 import { Reveal } from './Reveal.js'
 import { KonamiCode } from './KonamiCode.js'
 import { Achievements } from './Achievements.js'
+import { Notifications } from './Notifications.js'
 
 export class Game
 {
@@ -75,6 +76,7 @@ export class Game
         this.server = new Server()
         this.ticker = new Ticker()
         this.time = new Time()
+        this.notifications = new Notifications()
         this.inputs = new Inputs([], [ 'intro' ])
         this.rayCursor = new RayCursor()
         this.viewport = new Viewport(this.domElement)
