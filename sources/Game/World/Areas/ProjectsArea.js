@@ -313,7 +313,6 @@ export class ProjectsArea extends Area
         this.navigation.current = null
         this.navigation.next = null
         this.navigation.previous = null
-        this.navigation.current = null
     }
 
     setImages()
@@ -1368,6 +1367,9 @@ export class ProjectsArea extends Area
         // Buttons
         this.game.inputs.interactiveButtons.clearItems()
         this.game.inputs.interactiveButtons.addItems(['previous', 'next', 'open', 'close'])
+
+        // Achievements
+        this.game.achievements.setProgress('projects', this.navigation.current.title)
     }
 
     close()
@@ -1508,6 +1510,10 @@ export class ProjectsArea extends Area
             imageIndex = direction === ProjectsArea.DIRECTION_NEXT ? 0 : this.navigation.current.images.length - 1
 
         this.changeImage(imageIndex, direction)
+
+        // Achievements
+        if(this.state === ProjectsArea.STATE_OPEN)
+            this.game.achievements.setProgress('projects', this.navigation.current.title)
     }
 
     changeImage(imageIndex = 0, direction = null)

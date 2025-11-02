@@ -349,7 +349,10 @@ export class Achievements
         // Reset
         group.reset = () =>
         {
-            group.progress = 0
+            if(group.progress instanceof Set)
+                group.progress = new Set()
+            else
+                group.progress = 0
 
             for(const achievement of group.items)
             {

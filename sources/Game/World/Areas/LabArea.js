@@ -1321,6 +1321,9 @@ export class LabArea extends Area
         // Buttons
         this.game.inputs.interactiveButtons.clearItems()
         this.game.inputs.interactiveButtons.addItems(['previous', 'next', 'open', 'close'])
+
+        // Achievement
+        this.game.achievements.setProgress('lab', this.navigation.current.title)
     }
 
     close()
@@ -1423,6 +1426,10 @@ export class LabArea extends Area
 
         // Scroller
         this.scroller.update(this.navigation.index)
+
+        // Achievements
+        if(this.state === LabArea.STATE_OPEN)
+            this.game.achievements.setProgress('lab', this.navigation.current.title)
     }
 
     update()
