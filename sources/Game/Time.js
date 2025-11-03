@@ -9,8 +9,6 @@ export class Time
     {
         this.game = Game.getInstance()
 
-        console.log(this.game)
-
         this.defaultScale = 2
         this._scale = this.defaultScale
         this.game.ticker.scale = this.scale
@@ -28,7 +26,7 @@ export class Time
         {
             this.debugPanel = this.game.debug.panel.addFolder({
                 title: '⏱️ Time',
-                expanded: true,
+                expanded: false,
             })
             this.debugPanel.addBinding(this, 'defaultScale', { min: 0, max: 5, step: 0.01 })
             this.debugPanel.addButton({ title: 'bullet time' }).on('click', () => { this.bulletTime.activate() })

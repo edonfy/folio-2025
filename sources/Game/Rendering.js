@@ -3,6 +3,7 @@ import { pass, mrt, output, emissive, renderOutput, vec4 } from 'three/tsl'
 import { bloom } from 'three/addons/tsl/display/BloomNode.js'
 import { Game } from './Game.js'
 import { cheapDOF } from './Passes/cheapDOF.js'
+import { Inspector } from 'three/addons/inspector/Inspector.js'
 
 export class Rendering
 {
@@ -14,7 +15,7 @@ export class Rendering
         {
             this.debugPanel = this.game.debug.panel.addFolder({
                 title: '📸 Rendering',
-                expanded: false,
+                expanded: true,
             })
         }
     }
@@ -23,6 +24,7 @@ export class Rendering
     {
         const promise = await this.setRenderer()
         this.setPostprocessing()
+        this.setStats()
 
         this.game.ticker.events.on('tick', () =>
         {
@@ -47,6 +49,11 @@ export class Rendering
         this.renderer.shadowMap.enabled = true
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
+        if(this.game.debug.active)
+        {
+            this.renderer.inspector = new Inspector()
+        }
+
         // Make the renderer control the ticker
         this.renderer.setAnimationLoop((elapsedTime) => { this.game.ticker.update(elapsedTime) })
 
@@ -66,10 +73,9 @@ export class Rendering
         this.bloomPass.strength.value = 0.25
         this.bloomPass.smoothWidth.value = 1
 
-        // this.postProcessing.outputNode = scenePassColor.add(this.bloomPass)
-
         this.cheapDOFPass = cheapDOF(renderOutput(scenePass))
 
+        // this.postProcessing.outputNode = scenePassColor.add(this.bloomPass)
         this.postProcessing.outputNode = this.cheapDOFPass.add(this.bloomPass)
 
         // Debug
@@ -94,6 +100,38 @@ export class Rendering
         }
     }
 
+    setStats()
+    {
+        if(!this.game.debug.active)
+            return
+
+        this.stats = {}
+        this.stats.feed = {}
+        this.stats.update = () =>
+        {
+            this.stats.feed.drawCalls = this.renderer.info.render.drawCalls.toLocaleString()
+            this.stats.feed.triangles = this.renderer.info.render.triangles.toLocaleString()
+            this.stats.feed.geometries = this.renderer.info.memory.geometries.toLocaleString()
+            this.stats.feed.textures = this.renderer.info.memory.textures.toLocaleString()
+        }
+
+        this.stats.update()
+
+        // Debug
+        if(this.game.debug.active)
+        {
+             const debugPanel = this.debugPanel.addFolder({
+                title: 'Stats',
+                expanded: true,
+            })
+
+            for(const feedName in this.stats.feed)
+            {
+                debugPanel.addBinding(this.stats.feed, feedName, { readonly: true })
+            }
+        }
+    }
+
     resize()
     {
         this.renderer.setSize(this.game.viewport.width, this.game.viewport.height)
@@ -102,8 +140,11 @@ export class Rendering
 
     async render()
     {
-        // await this.renderer.renderAsync(this.game.scene, this.game.view.camera)
-        await this.postProcessing.renderAsync()
+        // this.renderer.render(this.game.scene, this.game.view.camera)
+        this.postProcessing.render()
+
+        if(this.stats)
+            this.stats.update()
 
         if(this.game.monitoring?.stats)
         {
