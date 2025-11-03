@@ -10,7 +10,7 @@ export class InstancedGroup
         this.references = references
         this.group = group
         this.count = this.references.length
-        
+
         this.setMeshes()
 
         if(autoUpdate)
@@ -35,7 +35,9 @@ export class InstancedGroup
                 const mesh = {}
 
                 _child.updateMatrix()
+                _child.updateWorldMatrix()
                 mesh.localMatrix = _child.matrix
+                // mesh.localMatrix = _child.matrixWorld
                 
                 mesh.instance = new THREE.InstancedMesh(_child.geometry, _child.material, this.count)
                 mesh.instance.name = _child.name
@@ -69,6 +71,7 @@ export class InstancedGroup
     {
         // Base
         const base = instances[0].clone()
+        console.log(base)
 
         base.position.set(0, 0, 0)
         base.rotation.set(0, 0, 0)

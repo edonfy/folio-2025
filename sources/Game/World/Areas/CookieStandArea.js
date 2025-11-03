@@ -154,8 +154,8 @@ export class CookieStandArea extends Area
     setCookies()
     {
         const baseCookie = this.references.get('cookie')[0]
-        for(const child of baseCookie.children)
-            child.position.sub(baseCookie.position)
+        // for(const child of baseCookie.children)
+        //     child.position.sub(baseCookie.position)
         
         baseCookie.removeFromParent()
 
