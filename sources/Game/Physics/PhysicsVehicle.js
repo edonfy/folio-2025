@@ -109,6 +109,7 @@ export class PhysicsVehicle
         // Setup
         this.wheels = {}
         this.wheels.inContactCount = 0
+        this.wheels.justTouchedCount = 0
         this.wheels.items = []
 
         // Create wheels
@@ -120,6 +121,7 @@ export class PhysicsVehicle
             wheel.contactPoint = null
             wheel.suspensionLength = null
             wheel.suspensionState = 'low'
+            wheel.lastTouchTime = this.game.ticker.elapsed
 
             // Default wheel with random parameters
             this.controller.addWheel(new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), 1, 1)
@@ -523,17 +525,38 @@ export class PhysicsVehicle
         if(Math.abs(this.game.player.accelerating) > 0.5)
             this.stuck.accumulate(this.velocity.length(), this.game.ticker.deltaScaled)
 
-        this.wheels.inContactCount = 0
+        let inContactCount = 0
         for(let i = 0; i < 4; i++)
         {
             const wheel = this.wheels.items[i]
-            wheel.inContact = this.controller.wheelIsInContact(i)
+
+            const inContact = this.controller.wheelIsInContact(i)
+
+            if(inContact && !wheel.inContact)
+            {
+                wheel.lastTouchTime = this.game.ticker.elapsed
+            }
+
+            wheel.inContact = inContact
             wheel.contactPoint = this.controller.wheelContactPoint(i)
             wheel.suspensionLength = this.controller.wheelSuspensionLength(i)
 
             if(wheel.inContact)
-                this.wheels.inContactCount++
+                inContactCount++
         }
+
+        let justTouchedCount = 0
+        if(inContactCount > this.wheels.inContactCount)
+        {
+            for(const wheel of this.wheels.items)
+            {
+                if(wheel.lastTouchTime > this.game.ticker.elapsed - 0.2)
+                    justTouchedCount++
+            }
+        }
+
+        this.wheels.inContactCount = inContactCount
+        this.wheels.justTouchedCount = justTouchedCount
 
         this.stop.test()
         this.upsideDown.test()

@@ -28,6 +28,7 @@ export class Player
         this.rotationY = 0
         this.distanceDriven = 0
         
+        this.setSounds()
         this.setInputs()
         this.setUnstuck()
         this.setBackWheel()
@@ -48,6 +49,41 @@ export class Player
         {
             this.updatePostPhysics()
         }, 5)
+    }
+
+    setSounds()
+    {
+        this.sounds = {}
+        this.sounds.suspensions = this.game.audio.register(
+            'suspensions',
+            {
+                path: 'sounds/suspensions/Grotto Gas Canister 4.mp3',
+                autoplay: false,
+                loop: false,
+                volume: 0.4,
+                antiSpam: 0.1,
+                playBinding: (item, count) =>
+                {
+                    item.volume = 0.1 + count * 0.05
+                    item.rate = 1.2 + Math.random() * 0.8
+                }
+            }
+        )
+        this.sounds.spring = this.game.audio.register(
+            'spring',
+            {
+                path: 'sounds/springs/SpringMetalMovements_1u54Y_01.mp3',
+                autoplay: false,
+                loop: false,
+                volume: 0.4,
+                antiSpam: 0.2,
+                playBinding: (item, count) =>
+                {
+                    item.volume = 0.1 + count * 0.1
+                    item.rate = 0.9 + Math.random() * 1
+                }
+            }
+        )
     }
 
     setInputs()
@@ -93,22 +129,6 @@ export class Player
         })
 
         // Suspensions
-        const suspensionsSound = this.game.audio.register(
-            'suspensions',
-            {
-                path: 'sounds/suspensions/Grotto Gas Canister 4.mp3',
-                autoplay: false,
-                loop: false,
-                volume: 0.4,
-                antiSpam: 0.1,
-                playBinding: (item, count) =>
-                {
-                    item.volume = 0.1 + count * 0.05
-                    item.rate = 1.2 + Math.random() * 0.8
-                }
-            }
-        )
-
         const suspensionsUpdate = () =>
         {
             if(this.state !== Player.STATE_DEFAULT)
@@ -132,7 +152,7 @@ export class Player
             if(activeCount)
             {
                 // Sound
-                suspensionsSound.play(activeCount)
+                this.sounds.suspensions.play(activeCount)
 
                 // Not a jump => Achievement
                 if(!this.game.inputs.actions.get('suspensions').active)
@@ -427,6 +447,10 @@ export class Player
         // Inputs touch joystick
         this.rotationY = Math.atan2(this.game.physicalVehicle.forward.z, this.game.physicalVehicle.forward.x)
         this.game.inputs.nipple.setCoordinates(this.position.x, this.position.y, this.position.z, this.rotationY)
+
+        // Sound
+        if(this.game.physicalVehicle.wheels.justTouchedCount > 1)
+            this.sounds.spring.play(this.game.physicalVehicle.wheels.justTouchedCount)
 
         // Time played
         this.timePlayed += this.game.ticker.delta

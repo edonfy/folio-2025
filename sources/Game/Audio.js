@@ -223,48 +223,75 @@ export class Audio
             }
         )
 
-        // this.register(
-        //     'energy',
-        //     {
-        //         path: 'sounds/energy/Energy_-_force_field_15_loop.mp3',
-        //         autoplay: true,
-        //         loop: true,
-        //         volume: 0,
-        //         tickBinding: (item) =>
-        //         {
-        //             const accelerating = 0.5 + Math.abs(this.game.player.accelerating) * 0.5
-        //             const boosting = this.game.player.boosting
-        //             const volume = accelerating * boosting * 0.5
-        //             const delta = volume - item.volume
-        //             const easing = delta > 0 ? 20 : 5
+        this.register(
+            'spin',
+            {
+                path: 'sounds/spin/41051 Glass stone turning loop 09-full.mp3',
+                autoplay: true,
+                loop: true,
+                volume: 0,
+                tickBinding: (item) =>
+                {
+                    // const accelerating = Math.abs(this.game.player.accelerating) * 0.5
+                    // const boosting = this.game.player.boosting + 1
+                    // const volume = accelerating * boosting * 0.8
+                    // const accelerating = Math.abs(this.game.player.accelerating) * 0.5
+                    // const boosting = this.game.player.boosting + 1
+                    const speedEffect = clamp(this.game.physicalVehicle.xzSpeed * 0.1, 0, 1)
+                    const volume = speedEffect * 0.3
+                    const delta = volume - item.volume
+                    const easing = delta > 0 ? 20 : 5
                     
-        //             item.volume += delta * this.game.ticker.delta * easing
+                    item.volume += delta * this.game.ticker.delta * easing
 
-        //             const rate = 1 + Math.abs(this.game.player.accelerating) * 0.5
-        //             item.rate += (rate - item.rate) * this.game.ticker.delta * 10
-        //         }
-        //     }
-        // )
+                    const rate = remapClamp(speedEffect, 0, 1, 1, 2)
+                    item.rate += (rate - item.rate) * this.game.ticker.delta * 10
+                }
+            }
+        )
 
-        // this.register(
-        //     'energy',
-        //     {
-        //         path: 'sounds/energy/Energy_-_force_field_6_loop.mp3',
-        //         autoplay: true,
-        //         loop: true,
-        //         volume: 0,
-        //         tickBinding: (item) =>
-        //         {
-        //             const accelerating = 0.5 + Math.abs(this.game.player.accelerating) * 0.5
-        //             const boosting = this.game.player.boosting
-        //             const volume = accelerating * boosting * 0.2
-        //             const delta = volume - item.volume
-        //             const easing = delta > 0 ? 20 : 5
+        this.register(
+            'energy',
+            {
+                path: 'sounds/energy/Energy_-_force_field_15_loop.mp3',
+                autoplay: true,
+                loop: true,
+                volume: 0,
+                tickBinding: (item) =>
+                {
+                    const accelerating = 0.5 + Math.abs(this.game.player.accelerating) * 0.5
+                    const boosting = this.game.player.boosting
+                    const volume = accelerating * boosting * 0.3
+                    const delta = volume - item.volume
+                    const easing = delta > 0 ? 20 : 5
                     
-        //             item.volume += delta * this.game.ticker.delta * easing
-        //         }
-        //     }
-        // )
+                    item.volume += delta * this.game.ticker.delta * easing
+
+                    const rate = 1 + Math.abs(this.game.player.accelerating) * 0.5
+                    item.rate += (rate - item.rate) * this.game.ticker.delta * 10
+                }
+            }
+        )
+
+        this.register(
+            'energy',
+            {
+                path: 'sounds/energy/Energy_-_force_field_6_loop.mp3',
+                autoplay: true,
+                loop: true,
+                volume: 0,
+                tickBinding: (item) =>
+                {
+                    const accelerating = 0.5 + Math.abs(this.game.player.accelerating) * 0.5
+                    const boosting = this.game.player.boosting
+                    const volume = accelerating * boosting * 0.2
+                    const delta = volume - item.volume
+                    const easing = delta > 0 ? 20 : 5
+                    
+                    item.volume += delta * this.game.ticker.delta * easing
+                }
+            }
+        )
     }
 
     setMuteToggle()
