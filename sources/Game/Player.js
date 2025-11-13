@@ -69,15 +69,14 @@ export class Player
         })
         this.sounds.honk = this.game.audio.register(
         {
-            path: 'sounds/honk/Car Horn Honking v1.mp3',
-            autoplay: false,
-            loop: false,
+            path: 'sounds/honk/Car Horn Long 4.mp3',
+            autoplay: true,
+            loop: true,
             volume: 0.4,
             antiSpam: 0.1,
-            onPlay: (item, count) =>
+            onPlaying: (item) =>
             {
-                // item.volume = 0.25 + count * 0.05
-                item.rate = 1 + Math.random() * 0.01
+                item.volume = this.game.inputs.actions.get('honk').active ? 0.5 : 0
             }
         })
         this.sounds.spring1 = this.game.audio.register({
@@ -133,7 +132,7 @@ export class Player
             // Default pebbles
             this.game.audio.register({
                 group: 'wheelsOnFloor',
-                path: 'sounds/floor/Source Stone Loop Small Rubbing Pebbles On Rubber 01.mp3',
+                path: 'sounds/floor/wheels-on-pebbles-road.mp3',
                 autoplay: true,
                 loop: true,
                 volume: 0,
@@ -142,24 +141,7 @@ export class Player
                     const defaultElevation = 1.08
                     const inAirEffect = remapClamp(Math.abs(this.game.physicalVehicle.position.y - defaultElevation), 0, 2, 1, 0)
                     const speedEffect = Math.min(1, this.game.physicalVehicle.xzSpeed * 0.1)
-                    // console.log(speedEffect)
-                    item.volume = inAirEffect * speedEffect * 0.15
-                    item.rate = 1.15
-                }
-            })
-
-            // Default pebbles (TODO: merge)
-            this.game.audio.register({
-                group: 'wheelsOnFloor',
-                path: 'sounds/floor/Earth Loop Dumping Gravel Sack Bulk Falling 01.mp3',
-                autoplay: true,
-                loop: true,
-                volume: 0,
-                onPlaying: (item) =>
-                {
-                    item.volume = this.game.audio.groups.get('wheelsOnFloor').items[0].volume * 0.5
-                    
-                    item.rate = 1.2
+                    item.volume = inAirEffect * speedEffect * 0.25
                 }
             })
 
@@ -537,9 +519,6 @@ export class Player
                 this.suspensions[ randomWheelIndex ] = previousState
             }
         })
-
-        // Sound
-        this.sounds.honk.play()
 
         // Achievement
         this.game.achievements.addProgress('honk')

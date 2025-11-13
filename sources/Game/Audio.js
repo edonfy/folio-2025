@@ -198,7 +198,7 @@ export class Audio
             this.playlist.current.sound.play()
         }
 
-        this.playlist.next()
+        // this.playlist.next()
     }
 
     setAmbiants()
@@ -217,7 +217,6 @@ export class Audio
             const tweetsPaths = [
                 'sounds/birdTweets/24074 small bird tweet calling-full-1.mp3',
                 'sounds/birdTweets/24074 small bird tweet calling-full-2.mp3',
-                'sounds/birdTweets/24074 small bird tweet calling-full-3.mp3',
                 'sounds/birdTweets/20711 finch bird isolated tweet-full.mp3',
                 'sounds/birdTweets/30673 Yellowhammer bird tweet 3-full.mp3',
                 'sounds/birdTweets/31062 Ortolan bird tweet-full.mp3',
@@ -426,7 +425,7 @@ export class Audio
             {
                 this.game.audio.register({
                     group: 'ovenFire',
-                    path: 'sounds/burning/Mountain Audio - Fire Burning in a Wood Stove 1.mp3',
+                    path: 'sounds/fire/Mountain Audio - Fire Burning in a Wood Stove 1.mp3',
                     autoplay: true,
                     loop: true,
                     volume: 0.4,
@@ -446,7 +445,7 @@ export class Audio
             {
                 this.game.audio.register({
                     group: 'campfire',
-                    path: 'sounds/burning/Fire Burning.mp3',
+                    path: 'sounds/fire/Fire Burning.mp3',
                     autoplay: true,
                     loop: true,
                     volume: 0.4,
