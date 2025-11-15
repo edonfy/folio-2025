@@ -1,6 +1,6 @@
 import { Game } from '../../Game.js'
 import { AltarArea } from './AltarArea.js'
-import { CookieStandArea } from './CookieStandArea.js'
+import { CookieArea } from './CookieArea.js'
 import { BonfireArea } from './BonfireArea.js'
 import { IntroArea } from './IntroArea.js'
 import { ControlsArea } from './ControlsArea.js'
@@ -19,14 +19,6 @@ export class Areas
     constructor()
     {
         this.game = Game.getInstance()
-
-        if(this.game.debug.active)
-        {
-            this.debugPanel = this.game.debug.panel.addFolder({
-                title: '🛋️ Areas',
-                expanded: false,
-            })
-        }
 
         this.setReferences()
         this.setObjects()
@@ -65,7 +57,7 @@ export class Areas
 
         const cookieReferences = this.references.getStartingWith('cookie')
         if(cookieReferences.size)
-            this.cookieStand = new CookieStandArea(cookieReferences)
+            this.cookie = new CookieArea(cookieReferences)
             
         const bonfireReferences = this.references.getStartingWith('bonfire')
         if(bonfireReferences.size)

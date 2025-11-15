@@ -8,7 +8,7 @@ import { MeshDefaultMaterial } from '../../Materials/MeshDefaultMaterial.js'
 import { alea } from 'seedrandom'
 import { Area } from './Area.js'
 
-export class CookieStandArea extends Area
+export class CookieArea extends Area
 {
     constructor(references)
     {
@@ -448,13 +448,14 @@ export class CookieStandArea extends Area
         spawnPosition.z += Math.random() - 0.5
         object.physical.body.setTranslation(spawnPosition)
         object.physical.body.setEnabled(true)
-        this.game.ticker.wait(1, () =>
+        this.game.ticker.wait(2, () =>
         {
-            object.physical.body.applyImpulse({
+            const impulse = {
                 x: (Math.random() - 0.5) * this.cookies.mass * 2,
                 y: Math.random() * this.cookies.mass * 3,
                 z: this.cookies.mass * 7
-            }, true)
+            }
+            object.physical.body.applyImpulse(impulse, true)
             object.physical.body.applyTorqueImpulse({ x: 0, y: 0, z: 0 }, true)
         })
 
