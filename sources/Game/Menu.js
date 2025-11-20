@@ -75,8 +75,6 @@ export class Menu
             if(tabsElement)
                 item.tabs = new Tabs(tabsElement)
 
-            // TODO: setup scroller
-            
             item.navigationElement.addEventListener('click', (event) =>
             {
                 event.preventDefault()
@@ -160,7 +158,6 @@ export class Menu
         
         this.current = item
         
-        // TODO: tabs
         // // Tabs resize
         // if(item.tabs)
         //     item.tabs.resize()

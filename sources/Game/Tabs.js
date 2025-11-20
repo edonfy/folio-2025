@@ -8,7 +8,7 @@ export class Tabs
         this.element = element
 
         this.setItems()
-        this.setResize()
+        // this.setResize()
     }
 
     setItems()
@@ -52,33 +52,33 @@ export class Tabs
             this.goTo(defaultItem.name)
     }
 
-    setResize()
-    {
-        this.game.viewport.events.on('throttleChange', () =>
-        {
-            this.resize()
-        })
+    // setResize()
+    // {
+    //     this.game.viewport.events.on('throttleChange', () =>
+    //     {
+    //         this.resize()
+    //     })
 
-        this.resize()
-    }
+    //     this.resize()
+    // }
 
-    resize()
-    {
-        let height = 0
+    // resize()
+    // {
+    //     let height = 0
 
-        this.items.list.forEach((item) =>
-        {
-            const bounding = item.innerElement.getBoundingClientRect()
+    //     this.items.list.forEach((item) =>
+    //     {
+    //         const bounding = item.innerElement.getBoundingClientRect()
             
-            if(bounding.height > height)
-                height = bounding.height
-        })
+    //         if(bounding.height > height)
+    //             height = bounding.height
+    //     })
 
-        if(height > 0)
-        {
-            this.items.contentContainer.style.height = `${height}px`
-        }
-    }
+    //     if(height > 0)
+    //     {
+    //         this.items.contentContainer.style.height = `${height}px`
+    //     }
+    // }
 
     goTo(itemName)
     {

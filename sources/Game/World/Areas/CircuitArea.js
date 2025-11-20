@@ -1195,7 +1195,6 @@ export class CircuitArea extends Area
 
         this.menu.updateLeaderboard = (scores = null) =>
         {
-            // TODO: Probably should test both menu open AND instance open
             // Menu not open => Set flag
             if(!this.menu.instance.isOpen)
             {
