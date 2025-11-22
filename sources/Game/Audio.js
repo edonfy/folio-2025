@@ -420,9 +420,9 @@ export class Audio
         // Oven fire (Project Area + Cookie Area)
         {
             const positions = []
-            if(this.game.world.areas.cookieStand)
+            if(this.game.world.areas?.cookieStand)
                 positions.push(this.game.world.areas.cookieStand.references.get('spawner')[0].position)
-            if(this.game.world.areas.projects)
+            if(this.game.world.areas?.projects)
                 positions.push(this.game.world.areas.projects.references.get('oven')[0].position)
 
             if(positions.length)
@@ -442,7 +442,7 @@ export class Audio
         // Campfire (Lab Area + Bonfire Area)
         {
             const positions = []
-            if(this.game.world.areas.lab)
+            if(this.game.world.areas?.lab)
                 positions.push(this.game.world.areas.lab.references.get('fire')[0].position)
 
             if(positions.length)

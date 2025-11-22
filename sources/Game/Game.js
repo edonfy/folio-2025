@@ -134,6 +134,7 @@ export class Game
                 [ 'oakTreesReferencesModel',               'oakTrees/oakTreesReferences.glb',                      'gltf'    ],
                 [ 'cherryTreesVisualModel',                'cherryTrees/cherryTreesVisual.glb',                    'gltf'    ],
                 [ 'cherryTreesReferencesModel',            'cherryTrees/cherryTreesReferences.glb',                'gltf'    ],
+                [ 'sceneryModel',                          'scenery/scenery.glb',                                  'gltf'    ],
                 [ 'areasModel',                            'areas/areas.glb',                                      'gltf'    ],
                 [ 'poleLightsModel',                       'poleLights/poleLights.glb',                            'gltf'    ],
                 [ 'whisperFlameTexture',                   'whispers/whisperFlame.png',                            'texture' ],

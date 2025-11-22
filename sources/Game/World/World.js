@@ -27,6 +27,7 @@ import { PoleLights } from './PoleLights.js'
 import { Lanterns } from './Lanterns.js'
 import { Fences } from './Fences.js'
 import { Benches } from './Benches.js'
+import { Scenery } from './Scenery.js'
 
 export class World
 {
@@ -75,6 +76,7 @@ export class World
             this.explosiveCrates = new ExplosiveCrates()
             this.poleLights = new PoleLights()
             this.lanterns = new Lanterns()
+            this.scenery = new Scenery()
             this.areas = new Areas()
         }
         else if(step === 2)
