@@ -52,7 +52,7 @@ export class Nipple
         this.uniforms.progressEndAngle = uniform(0)
         this.uniforms.colorMultiplier = uniform(1)
         
-        const material = new THREE.MeshBasicNodeMaterial({ transparent: true, wireframe: false })
+        const material = new THREE.MeshBasicNodeMaterial({ transparent: true, wireframe: false, depthWrite: false })
 
         material.outputNode = Fn(() =>
         {
