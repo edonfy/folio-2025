@@ -148,11 +148,15 @@ export class Audio
         this.playlist.songs = [
             {
                 path: 'sounds/musics/Portfolio BS - Track 2 V1.mp3',
-                name: 'Baguira.mp3'
+                name: 'Sudo.mp3'
             },
             {
                 path: 'sounds/musics/Portfolio BS - Track 4 V1.mp3',
                 name: 'Boy.mp3'
+            },
+            {
+                path: 'sounds/musics/Portfolio BS - Track 5_001 VF.mp3',
+                name: 'Baguira.mp3'
             },
         ]
         this.playlist.index = (Math.floor(Date.now() / 1000 / 60 / 3) % this.playlist.songs.length) // Different music every X minutes
