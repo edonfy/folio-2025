@@ -165,6 +165,14 @@ export class InputFlag
         this.isOpen = true
         this.selectElement.classList.add('is-visible')
         this.searchElement.focus()
+
+        if(this.country)
+        {
+            this.scrollerElement.scrollTop = this.country.element.offsetTop - 15
+            console.log(this.country.element.offsetTop)
+        }
+        console.log('open')
+        console.log(this.country)
     }
 
     close()
