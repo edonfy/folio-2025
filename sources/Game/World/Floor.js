@@ -22,6 +22,7 @@ export class Floor
 
         this.setVisual()
         this.setPhysical()
+        this.setBedRock()
 
         this.game.ticker.events.on('tick', () =>
         {
@@ -151,9 +152,38 @@ export class Floor
         this.physical = object.physical
     }
 
+    setBedRock()
+    {
+        this.bedRock = {}
+        this.bedRock.halfExtent = 0.5
+
+
+        this.bedRock.physical = this.game.physics.getPhysical({
+            type: 'kinematicPositionBased',
+            position: new THREE.Vector3(0, this.game.water.depthElevation - this.bedRock.halfExtent, 0),
+            frictionRule: 'min',
+            friction: 0.5,
+            enabled: true,
+            colliders:
+            [
+                { shape: 'cuboid', parameters: [ 10, this.bedRock.halfExtent, 10 ] },
+            ]
+        })
+    }
+
     update()
     {
         this.mesh.position.x = Math.round(this.game.view.optimalArea.position.x / this.cellSize) * this.cellSize
         this.mesh.position.z = Math.round(this.game.view.optimalArea.position.z / this.cellSize) * this.cellSize
+
+        // Bedrock
+        const x = Math.round(this.game.player.position.x)
+        const z = Math.round(this.game.player.position.z)
+        this.bedRock.physical.body.setNextKinematicTranslation({
+            x,
+            y: this.game.water.depthElevation - this.bedRock.halfExtent,
+            z
+        })
+        this.bedRock.physical.body.setLinvel({ x: 1, y: 0, z: 0 })
     }
 }
