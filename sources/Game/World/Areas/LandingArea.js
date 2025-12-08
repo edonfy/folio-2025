@@ -42,14 +42,14 @@ export class LandingArea extends Area
         // Interactive point
         const interactivePoint = this.game.interactivePoints.create(
             this.references.items.get('kioskInteractivePoint')[0].position,
-            'Read me!',
+            'Map',
             InteractivePoints.ALIGN_RIGHT,
             InteractivePoints.STATE_CONCEALED,
             () =>
             {
                 this.game.inputs.interactiveButtons.clearItems()
-                this.game.menu.open('home')
-                interactivePoint.hide()
+                this.game.modals.open('map')
+                // interactivePoint.hide()
             },
             () =>
             {
@@ -65,10 +65,10 @@ export class LandingArea extends Area
             }
         )
 
-        this.game.menu.items.get('home').events.on('close', () =>
-        {
-            interactivePoint.show()
-        })
+        // this.game.map.items.get('map').events.on('close', () =>
+        // {
+        //     interactivePoint.show()
+        // })
     }
 
     setControls()

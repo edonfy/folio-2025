@@ -29,7 +29,7 @@ export class Intro
         this.label.position.y = 3.3
         this.label.rotation.y = 0.4
         this.label.scale.setScalar(0.01)
-        this.game.scene.add(this.label)
+        // this.game.scene.add(this.label)
     }
 
     setCircle()

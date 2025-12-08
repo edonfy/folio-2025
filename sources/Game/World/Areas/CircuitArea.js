@@ -1085,8 +1085,8 @@ export class CircuitArea extends Area
         this.podium.object = this.references.items.get('podium')[0].userData.object
         this.podium.confettiPositionA = this.references.items.get('podiumConfettiA')[0].position.clone()
         this.podium.confettiPositionB = this.references.items.get('podiumConfettiB')[0].position.clone()
-        this.podium.respawn = this.references.items.get('podiumRespawn')[0]
-        this.podium.viewFocusPosition = this.podium.respawn.position.clone()
+        const respawn = this.game.respawns.getByName('circuit')
+        this.podium.viewFocusPosition = respawn.position.clone()
         this.podium.viewFocusPosition.x -= 4
         this.podium.viewFocusPosition.y = 0
         this.podium.viewFocusPosition.z -= 3
