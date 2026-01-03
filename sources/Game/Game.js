@@ -94,9 +94,9 @@ export class Game
         await this.rendering.setRenderer()
         this.resources = await this.resourcesLoader.load([
             [ 'respawnsReferencesModel',    'respawns/respawnsReferences-compressed.glb', 'gltf' ],
-            [ 'behindTheSceneStarsTexture', 'behindTheScene/stars.ktx',              'textureKtx', (resource) => { resource.colorSpace = THREE.SRGBColorSpace; resource.minFilter = THREE.NearestFilter; resource.magFilter = THREE.NearestFilter; resource.generateMipmaps = false; resource.wrapS = THREE.RepeatWrapping; resource.wrapT = THREE.RepeatWrapping; } ],
-            [ 'soundTexture',               'intro/sound.ktx',                       'textureKtx', (resource) => { resource.minFilter = THREE.LinearFilter; resource.magFilter = THREE.LinearFilter; resource.generateMipmaps = false; resource.repeat.x = 0.5; } ],
-            [ 'paletteTexture',             'palette.ktx',                           'textureKtx', (resource) => { resource.minFilter = THREE.NearestFilter; resource.magFilter = THREE.NearestFilter; resource.generateMipmaps = false; resource.colorSpace = THREE.SRGBColorSpace; } ],
+            [ 'behindTheSceneStarsTexture', 'behindTheScene/stars.ktx',                   'textureKtx', (resource) => { resource.colorSpace = THREE.SRGBColorSpace; resource.minFilter = THREE.NearestFilter; resource.magFilter = THREE.NearestFilter; resource.generateMipmaps = false; resource.wrapS = THREE.RepeatWrapping; resource.wrapT = THREE.RepeatWrapping; } ],
+            [ 'soundTexture',               'intro/sound.ktx',                            'textureKtx', (resource) => { resource.minFilter = THREE.LinearFilter; resource.magFilter = THREE.LinearFilter; resource.generateMipmaps = false; resource.repeat.x = 0.5; } ],
+            [ 'paletteTexture',             'palette.ktx',                                'textureKtx', (resource) => { resource.minFilter = THREE.NearestFilter; resource.magFilter = THREE.NearestFilter; resource.generateMipmaps = false; resource.colorSpace = THREE.SRGBColorSpace; } ],
 
         ])
         this.options = new Options()
